@@ -84,8 +84,9 @@ if [ -d "$to" ]; then
 fi
 
 mkdir -p "$to" && cd "$to"
-say "Installing into $(pwd)"
+say "Installing SSKit into $(pwd)"
 curl -L -\# "$from" | tar -zxf - --strip-components 1
+chmod +x *.sh
 
 ln -s "$home/.sskit/ssk_install.sh" "/usr/local/bin/ssk_install"
 ln -s "$home/.sskit/ssk_setup.sh" "/usr/local/bin/ssk_setup"
