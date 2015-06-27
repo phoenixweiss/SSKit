@@ -45,6 +45,8 @@ got_ssk() {
   true # Check SSKit availible in current session
 }
 
+export -f got_ssk # Export function for check SSKit availibility
+
 ### Begin script ###
 
 say "$(currtime)"
@@ -58,6 +60,8 @@ if [ $EUID -ne 0 ]; then
   say "$(currtime)"
   exit 1 # Exit with error
 fi
+
+say "You run script under $(uname -s) Operating Sistem"
 
 if any 'curl'; then
   say "You have already got curl, no need to install it."
@@ -89,13 +93,16 @@ curl -L -\# "$from" | tar -zxf - --strip-components 1
 chmod +x *.sh
 
 ln -s "$home/.sskit/ssk_install.sh" "/usr/local/bin/ssk_install"
-ln -s "$home/.sskit/ssk_setup.sh" "/usr/local/bin/ssk_setup"
+ln -s "$home/.sskit/ssk_test.sh" "/usr/local/bin/ssk_test"
 
-set -a
+say "Installation completed. New global commands availible:
+$(important 'ssk_install')
+$(important 'ssk_test')
+Do not forget to use sudo for execute them!"
 
-# TODO export -f got_ssk # Export function to verify SSKit installation test
+say "- - - - - - - - - - - - - - -"
 
-say "Installation completed. New global commands availible:\n$(important 'ssk_install')\n$(important 'ssk_setup')"
+say "Do you want to further server setup? (y/N)"
 
 say "$(currtime)"
 
