@@ -56,25 +56,25 @@ logo
 say "Hello, $USER"
 
 if [ $EUID -ne 0 ]; then
-  say "The script $0 must run under root privileges!"
+  say "The script $0 must run under $(important root) privileges!"
   say "$(currtime)"
   exit 1 # Exit with error
 fi
 
-say "You run script under $(uname -s) Operating Sistem"
+say "You run script under $(uname -s) Operating System"
 
 if any 'curl'; then
-  say "You have already got curl, no need to install it."
+  say "You have already got $(important curl), no need to install it."
 else
-  say "SSKit needs curl for further work."
+  say "SSKit needs $(important curl) for further work."
     if any 'brew'; then # for test on Mac
-      say "Installing curl via brew"
+      say "Installing $(important curl) via brew"
       brew install curl
     elif any 'apt-get'; then # on production Debian
-      say "Installing curl via apt-get"
+      say "Installing $(important curl) via apt-get"
       apt-get install curl
     else
-      say "Please install curl manually then start the script again!"
+      say "Please install $(important curl) manually then start the script again!"
       say "$(currtime)"
       exit 1 # Exit with error
     fi
@@ -96,13 +96,15 @@ ln -s "$home/.sskit/ssk_install.sh" "/usr/local/bin/ssk_install"
 ln -s "$home/.sskit/ssk_test.sh" "/usr/local/bin/ssk_test"
 
 say "Installation completed. New global commands availible:
-$(important 'ssk_install')
-$(important 'ssk_test')
+1. $(important 'ssk_install')
+2. $(important 'ssk_mkstage')
+3. $(important 'ssk_dbcreate')
+4. $(important 'ssk_test')
 Do not forget to use sudo for execute them!"
 
 say "- - - - - - - - - - - - - - -"
 
-say "Do you want to further server setup? (y/N)"
+say "Do you want to further server setup? You always be able to do it later with $(important 'sudo ssk_install') (y/N)"
 
 say "$(currtime)"
 
