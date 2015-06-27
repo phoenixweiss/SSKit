@@ -56,7 +56,36 @@ if [ $EUID -ne 0 ]; then
   exit 1 # Exit with error
 fi
 
-say "Some important info:\n$(important TEST)"
+if any 'curl'; then
+  say "You have already got curl, no need to install it."
+else
+  say "SSKit needs curl for further work."
+    if any 'brew'; then # for test on Mac
+      say "Installing curl via brew"
+      brew install curl
+    elif any 'apt-get'; then # on production
+      say "Installing curl via apt-get"
+      apt-get install curl
+    else
+      say "Please install curl manually then start the script again!"
+      exit 1 # Exit with error
+    fi
+fi
+
+# Check if install directory exists
+if [ -d "$to" ]; then
+  say "Old version of SSKit found, handle it."
+  rm -rf "$home/.sskit" # Remove it cause incompatibility
+  cd "$home"
+fi
+
+mkdir -p "$to" && cd "$to"
+say "Installing into $(pwd)"
+curl -L -\# "$from" | tar -zxf - --strip-components 1
+ls -la
+
+# say "Some important info:\n$(important TEST)"
+# TODO . ./script.sh --source-only
 
 say "$(currtime)"
 
