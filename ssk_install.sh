@@ -30,7 +30,7 @@ currtime() {
 }
 
 say() {
-  printf "\n\e[1m$1\e[0m\n\n" # Pre-format script messages
+  printf "\e[1m$1\e[0m\n\n" # Pre-format script messages
 }
 
 important() {
@@ -57,7 +57,7 @@ say "$(currtime)"
 
 logo
 
-say "Hello, $USER, you run SSKit script under $(uname -s) Operating System"
+say "Hello, $USER! You run SSKit script under $(uname -s) Operating System."
 
 if [ $EUID -ne 0 ]; then
   say "The script $0 must run under $(important root) privileges!"
