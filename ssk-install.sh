@@ -12,11 +12,15 @@ to="$home/.sskit" # Destination
 ### Define functions ###
 
 say() {
-  printf "\n$1\n\n"
+  printf "\n\e[1m$1\e[0m\n\n" # Pre-format script messages
+}
+
+important() {
+  echo -e "\e[7m$1\e[27m" # Show importance of some info such as passwords
 }
 
 any() {
-  type "$1" >/dev/null 2>&1
+  type "$1" >/dev/null 2>&1 # Check availibility of something
 }
 
 ### Begin script ###
@@ -28,6 +32,6 @@ if [ $EUID -ne 0 ]; then
   exit 1 # Exit with error
 fi
 
-say "Test"
+say "Some important info:\n$(important TEST)"
 
 exit 0 # Success exit
