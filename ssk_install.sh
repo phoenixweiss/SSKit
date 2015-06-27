@@ -91,6 +91,8 @@ chmod +x *.sh
 ln -s "$home/.sskit/ssk_install.sh" "/usr/local/bin/ssk_install"
 ln -s "$home/.sskit/ssk_setup.sh" "/usr/local/bin/ssk_setup"
 
+set -a
+
 # TODO export -f got_ssk # Export function to verify SSKit installation test
 
 say "Installation completed. New global commands availible:\n$(important 'ssk_install')\n$(important 'ssk_setup')"
