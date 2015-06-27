@@ -68,6 +68,7 @@ else
       apt-get install curl
     else
       say "Please install curl manually then start the script again!"
+      say "$(currtime)"
       exit 1 # Exit with error
     fi
 fi
@@ -75,7 +76,7 @@ fi
 # Check if install directory exists
 if [ -d "$to" ]; then
   say "Old version of SSKit found, handle it."
-  rm -rf "$home/.sskit" # Remove it cause incompatibility
+  rm -rf "$home/.sskit" # Remove it recursively
   cd "$home"
 fi
 
@@ -83,6 +84,8 @@ mkdir -p "$to" && cd "$to"
 say "Installing into $(pwd)"
 curl -L -\# "$from" | tar -zxf - --strip-components 1
 ls -la
+
+ln -s "$home/.sskit/ssk_setup" "/usr/local/bin/ssk_setup"
 
 # say "Some important info:\n$(important TEST)"
 # TODO . ./script.sh --source-only
