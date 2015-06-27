@@ -37,6 +37,10 @@ important() {
   echo -e "\e[7m$1\e[27m" # Show importance of some info such as passwords
 }
 
+hr() {
+  say "- - - - - - - - - - - - - - -"
+}
+
 any() {
   type "$1" >/dev/null 2>&1 # Check availibility of something
 }
@@ -53,15 +57,13 @@ say "$(currtime)"
 
 logo
 
-say "Hello, $USER"
+say "Hello, $USER, you run SSKit script under $(uname -s) Operating System"
 
 if [ $EUID -ne 0 ]; then
   say "The script $0 must run under $(important root) privileges!"
   say "$(currtime)"
   exit 1 # Exit with error
 fi
-
-say "You run script under $(uname -s) Operating System"
 
 if any 'curl'; then
   say "You have already got $(important curl), no need to install it."
@@ -92,8 +94,8 @@ say "Installing SSKit into $(pwd)"
 curl -L -\# "$from" | tar -zxf - --strip-components 1
 chmod +x *.sh
 
-ln -s "$home/.sskit/ssk_install.sh" "/usr/local/bin/ssk_install"
-ln -s "$home/.sskit/ssk_test.sh" "/usr/local/bin/ssk_test"
+ln -s "$home/.sskit/ssk_install.sh" "/usr/local/bin/ssk_install" >/dev/null 2>&1
+ln -s "$home/.sskit/ssk_test.sh" "/usr/local/bin/ssk_test" >/dev/null 2>&1
 
 say "Installation completed. New global commands availible:
 1. $(important 'ssk_install')
@@ -102,9 +104,22 @@ say "Installation completed. New global commands availible:
 4. $(important 'ssk_test')
 Do not forget to use sudo for execute them!"
 
-say "- - - - - - - - - - - - - - -"
+hr
 
-say "Do you want to further server setup? You always be able to do it later with $(important 'sudo ssk_install') (y/N)"
+say "Do you want to further server setup? You always be able to do it later with $(important 'sudo ssk_install')"
+
+select yn in "Yes" "No"; do
+    case $yn in
+        Yes )
+          say "good";
+          break
+          ;;
+        No )
+          say "$(currtime)"
+          exit 0 # Exit without further setup
+          ;;
+    esac
+done
 
 say "$(currtime)"
 
