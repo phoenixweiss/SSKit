@@ -11,8 +11,23 @@ to="$home/.sskit" # Destination
 
 ### Define functions ###
 
+logo() {
+cat <<"LOGO"
+
+███████╗███████╗██╗  ██╗██╗████████╗
+██╔════╝██╔════╝██║ ██╔╝██║╚══██╔══╝
+███████╗███████╗█████╔╝ ██║   ██║
+╚════██║╚════██║██╔═██╗ ██║   ██║
+███████║███████║██║  ██╗██║   ██║
+╚══════╝╚══════╝╚═╝  ╚═╝╚═╝   ╚═╝
+
+by Paul Phönixweiß aka phoenixweiss
+
+LOGO
+}
+
 currtime() {
-  date "+%d.%m.%Y %H:%M:%S"
+  date "+%d.%m.%Y %H:%M:%S" # Shows current time in "dd.mm.YYYY HH:MM:SS" format
 }
 
 say() {
@@ -38,6 +53,8 @@ if [ $EUID -ne 0 ]; then
   say "$(currtime)"
   exit 1 # Exit with error
 fi
+
+logo
 
 say "Some important info:\n$(important TEST)"
 
