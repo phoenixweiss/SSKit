@@ -3,17 +3,18 @@ Server Setup Kit — All you need for easy setup a new Debian 7+ server that fit
 
 ## How to install
 
-  Make sure you know sudo password(if any).
+Make sure you know sudo password(if any).
 
-  Install using __curl__
-  ```
-  curl -O https://raw.githubusercontent.com/phoenixweiss/sskit/master/ssk-install.sh && sudo ./ssk-install.sh
-  ```
+Install using __curl__
 
-  Install using __wget__
-  ```
-  wget https://raw.githubusercontent.com/phoenixweiss/sskit/master/ssk-install.sh -v -O ssk-install.sh && chmod +x ssk-install.sh && sudo ./ssk-install.sh
-  ```
+```
+curl -O https://raw.githubusercontent.com/phoenixweiss/sskit/master/ssk-install.sh && sudo ./ssk-install.sh
+```
+
+Install using __wget__
+```
+wget https://raw.githubusercontent.com/phoenixweiss/sskit/master/ssk-install.sh -v -O ssk-install.sh && chmod +x ssk-install.sh && sudo ./ssk-install.sh
+```
 
 ## Notes:
 
