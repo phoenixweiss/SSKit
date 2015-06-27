@@ -11,6 +11,10 @@ to="$home/.sskit" # Destination
 
 ### Define functions ###
 
+currtime() {
+  date "+%d.%m.%Y %H:%M:%S"
+}
+
 say() {
   printf "\n\e[1m$1\e[0m\n\n" # Pre-format script messages
 }
@@ -25,13 +29,18 @@ any() {
 
 ### Begin script ###
 
+say "$(currtime)"
+
 say "Hello, $USER"
 
 if [ $EUID -ne 0 ]; then
   say "The script $0 must run under root privileges!"
+  say "$(currtime)"
   exit 1 # Exit with error
 fi
 
 say "Some important info:\n$(important TEST)"
+
+say "$(currtime)"
 
 exit 0 # Success exit
