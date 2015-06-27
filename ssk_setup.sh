@@ -1,6 +1,6 @@
 #!/bin/bash
 
 clear
-# TODO . ./ssk_functions.sh --source-only
+. ssk_install --source-only
 
-type "say" >/dev/null 2>&1 && echo "functions imported" || echo "functions not imported"
+type "got_ssk" >/dev/null 2>&1 && echo "functions imported" || echo "functions not imported"

@@ -5,7 +5,6 @@ clear
 ### Define variables ###
 
 home=$(sh -c "echo ~$(whoami)") # Great idea to safely define home by Ben Hoskings, author of "babushka" https://github.com/benhoskings/babushka
-
 from="https://github.com/phoenixweiss/sskit/archive/master.tar.gz" # Source
 to="$home/.sskit" # Destination
 
@@ -42,6 +41,10 @@ any() {
   type "$1" >/dev/null 2>&1 # Check availibility of something
 }
 
+got_ssk() {
+  true # Check SSKit availible in current session
+}
+
 ### Begin script ###
 
 say "$(currtime)"
@@ -63,7 +66,7 @@ else
     if any 'brew'; then # for test on Mac
       say "Installing curl via brew"
       brew install curl
-    elif any 'apt-get'; then # on production
+    elif any 'apt-get'; then # on production Debian
       say "Installing curl via apt-get"
       apt-get install curl
     else
@@ -76,19 +79,20 @@ fi
 # Check if install directory exists
 if [ -d "$to" ]; then
   say "Old version of SSKit found, handle it."
-  rm -rf "$home/.sskit" # Remove it recursively
+  rm -rf "$to" # Remove it recursively
   cd "$home"
 fi
 
 mkdir -p "$to" && cd "$to"
 say "Installing into $(pwd)"
 curl -L -\# "$from" | tar -zxf - --strip-components 1
-ls -la
 
-ln -s "$home/.sskit/ssk_setup" "/usr/local/bin/ssk_setup"
+ln -s "$home/.sskit/ssk_install.sh" "/usr/local/bin/ssk_install"
+ln -s "$home/.sskit/ssk_setup.sh" "/usr/local/bin/ssk_setup"
 
-# say "Some important info:\n$(important TEST)"
-# TODO . ./script.sh --source-only
+# TODO export -f got_ssk # Export function to verify SSKit installation test
+
+say "Installation completed. New global commands availible:\n$(important 'ssk_install')\n$(important 'ssk_setup')"
 
 say "$(currtime)"
 
