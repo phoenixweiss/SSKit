@@ -2,6 +2,13 @@
 
 clear
 
+### Define variables ###
+
+home=$(sh -c "echo ~$(whoami)") # Great idea to safely define home by Ben Hoskings, author of "babushka" https://github.com/benhoskings/babushka
+
+from="https://github.com/phoenixweiss/sskit/archive/master.tar.gz" # Source
+to="$home/.sskit" # Destination
+
 ### Define functions ###
 
 say() {
