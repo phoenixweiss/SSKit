@@ -46,6 +46,8 @@ any() {
 
 say "$(currtime)"
 
+logo
+
 say "Hello, $USER"
 
 if [ $EUID -ne 0 ]; then
@@ -53,8 +55,6 @@ if [ $EUID -ne 0 ]; then
   say "$(currtime)"
   exit 1 # Exit with error
 fi
-
-logo
 
 say "Some important info:\n$(important TEST)"
 
