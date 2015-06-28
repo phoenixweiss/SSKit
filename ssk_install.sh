@@ -9,66 +9,16 @@ from="https://github.com/phoenixweiss/sskit/archive/master.tar.gz" # Source
 to="$home/.sskit" # Destination
 ostype=$(uname -s) # Checks OS type
 
+if [ ! type "got_ssk" >/dev/null 2>&1 ]; then
+  wget -O- -q https://raw.githubusercontent.com/phoenixweiss/sskit/master/ssk_init.sh >> $home/.profile
+  . $home/.profile
+  export -f got_ssk # Export function for check SSKit availibility
+fi
+
 # TODO gather full information about release
 # lsb_release -i # ID
 # lsb_release -r # Version release
 # lsb_release -c # Codename
-
-### Define functions ###
-
-logo() {
-cat <<"LOGO"
-
-███████╗███████╗██╗  ██╗██╗████████╗
-██╔════╝██╔════╝██║ ██╔╝██║╚══██╔══╝
-███████╗███████╗█████╔╝ ██║   ██║
-╚════██║╚════██║██╔═██╗ ██║   ██║
-███████║███████║██║  ██╗██║   ██║
-╚══════╝╚══════╝╚═╝  ╚═╝╚═╝   ╚═╝
-
-by Paul Phönixweiß aka phoenixweiss
-
-LOGO
-}
-
-currtime() {
-  date "+%d.%m.%Y %H:%M:%S" # Shows current time in "dd.mm.YYYY HH:MM:SS" format
-}
-
-say() {
-  printf "\e[1m$1\e[0m\n\n" # Pre-format script messages
-}
-
-important() {
-  echo -e "\e[7m $1 \e[27m" # Show importance of some info such as passwords
-}
-
-warn() {
-  echo -e "\e[31m$1\e[39m" # Text for warnings
-}
-
-hr() {
-  say "- - - - - - - - - - - - - - -"
-  sleep 1.5s
-}
-
-any() {
-  type "$1" >/dev/null 2>&1 # Check availibility of something
-}
-
-pass_gen() {
-  echo "$(date +%s | md5sum | base64 | head -c $1)" # Generates N-character-based random password
-}
-
-osrelcodename() {
-  echo "$(lsb_release -c)" | sed 's/.*:\t//' # Extracts release codename
-}
-
-got_ssk() {
-  true # Check SSKit availible in current session
-}
-
-export -f got_ssk # Export function for check SSKit availibility
 
 ### Begin script ###
 
@@ -80,11 +30,7 @@ sleep 2s
 
 say "Hello, $USER! You run SSKit script under $ostype Operating System."
 
-if [ $EUID -ne 0 ]; then
-  say "The script $0 must run under $(important root) privileges!"
-  say "$(currtime)"
-  exit 1 # Exit with error
-fi
+rootonly
 
 if any 'curl'; then
   say "You have already got $(important curl), no need to install it."
@@ -120,6 +66,7 @@ curl -L -\# "$from" | tar -zxf - --strip-components 1
 chmod +x *.sh
 
 ln -s "$home/.sskit/ssk_install.sh" "/usr/local/bin/ssk_install" >/dev/null 2>&1
+ln -s "$home/.sskit/ssk_mkstage.sh" "/usr/local/bin/ssk_mkstage" >/dev/null 2>&1
 ln -s "$home/.sskit/ssk_test.sh" "/usr/local/bin/ssk_test" >/dev/null 2>&1
 
 printf "\n"
@@ -128,12 +75,11 @@ hr
 
 say "Installation completed. New global commands availible:
 1. $(important 'ssk_install') (this script)
-2. $(important 'ssk_mkstage') (creates stage for project with nginx config and new db) $(warn '*')
-3. $(important 'ssk_dbcreate') (creates only new db) $(warn '*')
-4. $(important 'ssk_test') (test script for debug)
+2. $(important 'ssk_mkstage') (creates stage for project with nginx config and new db)
+3. $(important 'ssk_test') (test script for debug) $(warn '*')
 Do not forget to use sudo for execute them!
 
-$(warn '* in progress')"
+$(warn '* currently in progress')"
 
 hr
 
@@ -325,7 +271,7 @@ select yn in "Yes" "No"; do
           ### Begin rbenv and ruby setup ###
 
           say "Installing $(important 'rbenv') for user deploy"
-          su - deploy -c 'curl https://raw.githubusercontent.com/fesplugas/rbenv-installer/master/bin/rbenv-installer | bash' # TODO make another installer mysqlf
+          su - deploy -c 'curl https://raw.githubusercontent.com/fesplugas/rbenv-installer/master/bin/rbenv-installer | bash' # TODO make another installer myself
 
           echo 'export RBENV_ROOT="/home/deploy/.rbenv"' >> /home/deploy/.profile
 
@@ -363,7 +309,7 @@ select yn in "Yes" "No"; do
 
           apt-get install -y apt-transport-https ca-certificates
 
-          echo "deb https://oss-binaries.phusionpassenger.com/apt/passenger $(osrelcodename) main" > /etc/apt/sources.list.d/passenger.list
+          echo "deb https://oss-binaries.phusionpassenger.com/apt/passenger $(oscodename) main" > /etc/apt/sources.list.d/passenger.list
 
           chown root /etc/apt/sources.list.d/passenger.list
           chmod 600 /etc/apt/sources.list.d/passenger.list

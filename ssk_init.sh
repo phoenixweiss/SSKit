@@ -50,6 +50,14 @@ oscodename() {
   echo "$(lsb_release -c)" | sed 's/.*:\t//' # Extracts release codename
 }
 
+rootonly() {
+  if [ $EUID -ne 0 ]; then
+    say "The script $0 must run under $(important root) privileges!"
+    say "$(currtime)"
+    exit 1 # Exit with error
+  fi
+}
+
 got_ssk() {
   true # Check SSKit availible in current session
 }
