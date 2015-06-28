@@ -9,6 +9,11 @@ from="https://github.com/phoenixweiss/sskit/archive/master.tar.gz" # Source
 to="$home/.sskit" # Destination
 ostype=$(uname -s) # Checks OS type
 
+# TODO gather full information about release
+# lsb_release -i # ID
+# lsb_release -r # Version release
+# lsb_release -c # Codename
+
 ### Define functions ###
 
 logo() {
@@ -53,6 +58,10 @@ any() {
 
 pass_gen() {
   echo "$(date +%s | md5sum | base64 | head -c $1)" # Generates N-character-based random password
+}
+
+osrelcodename() {
+  echo "$(lsb_release -c)" | sed 's/.*:\t//' # Extracts release codename
 }
 
 got_ssk() {
@@ -285,7 +294,7 @@ select yn in "Yes" "No"; do
 
           say "Install all necessary packages"
 
-          apt-get install -y debconf git git-core gcc make imagemagick libmagickwand-dev libcurl4-openssl-dev autoconf bison build-essential libssl-dev libyaml-dev libxml2-dev libxslt1-dev libreadline-dev zlib1g zlib1g-dev libncurses5-dev libffi-dev libgdbm3 libgdbm-dev
+          apt-get install -y debconf lsb-core git git-core gcc make imagemagick libmagickwand-dev libcurl4-openssl-dev autoconf bison build-essential libssl-dev libyaml-dev libxml2-dev libxslt1-dev libreadline-dev zlib1g zlib1g-dev libncurses5-dev libffi-dev libgdbm3 libgdbm-dev
 
           printf "\n"
 
@@ -343,6 +352,36 @@ select yn in "Yes" "No"; do
           su - deploy -c 'gem install bundler'
 
           ### End rbenv and ruby setup ###
+
+          hr
+
+          ### Begin Passenger Setup ###
+
+          say "Install Passenger and make all necessary configuration"
+
+          apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 561F9B9CAC40B2F7
+
+          apt-get install -y apt-transport-https ca-certificates
+
+          echo "deb https://oss-binaries.phusionpassenger.com/apt/passenger $(osrelcodename) main" > /etc/apt/sources.list.d/passenger.list
+
+          chown root /etc/apt/sources.list.d/passenger.list
+          chmod 600 /etc/apt/sources.list.d/passenger.list
+          apt-get update
+
+          apt-get install -y --force-yes nginx-full nginx-extras passenger
+
+          apt-get update --fix-missing
+          apt-get -y autoremove
+
+          sed -i "s|www-data;|deploy;|g" "/etc/nginx/nginx.conf"
+          sed -i "s|# passenger_root.*|passenger_root $(/usr/bin/passenger-config --root);|" /etc/nginx/nginx.conf
+          sed -i "s|# passenger_ruby.*|passenger_ruby /home/deploy/.rbenv/shims/ruby;|" /etc/nginx/nginx.conf
+          sed -i "s|# server_tokens off.*|client_max_body_size 20M;|" /etc/nginx/nginx.conf
+
+          service nginx restart
+
+          ### End Passenger Setup ###
 
           ### End stage setup ###
 
