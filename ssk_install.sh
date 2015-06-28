@@ -35,7 +35,7 @@ say() {
 }
 
 important() {
-  echo -e "\e[7m$1\e[27m" # Show importance of some info such as passwords
+  echo -e "\e[7m $1 \e[27m" # Show importance of some info such as passwords
 }
 
 warn() {
@@ -232,6 +232,7 @@ select yn in "Yes" "No"; do
           say "There is your public deployment key:"
           hr
           important "$(cat /home/deploy/.ssh/id_rsa.pub)"
+          printf "\n"
           hr
 
           say "Duplicate existing root keys to deploy user with proper rights"
