@@ -246,10 +246,10 @@ select yn in "Yes" "No"; do
           hr
 
           test -d /root/.ssh
-          if [ $? -ne 0 ]
+          if [ $? -eq 0 ]
           then
             test -f /root/.ssh/authorized_keys
-            if [ $? -ne 0 ]
+            if [ $? -eq 0 ]
             then
             say "Duplicate existing root authorized_keys to deploy user with proper rights"
             cp /root/.ssh/authorized_keys /home/deploy/.ssh/
