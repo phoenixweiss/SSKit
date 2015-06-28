@@ -106,12 +106,12 @@ hr
 
 say "Installation completed. New global commands availible:
 1. $(important 'ssk_install') (this script)
-2. $(important 'ssk_mkstage') (creates stage for project with nginx config and new db) *
-3. $(important 'ssk_dbcreate') (creates only new db) *
+2. $(important 'ssk_mkstage') (creates stage for project with nginx config and new db) $(warn '*')
+3. $(important 'ssk_dbcreate') (creates only new db) $(warn '*')
 4. $(important 'ssk_test') (test script for debug)
 Do not forget to use sudo for execute them!
 
-* in progress"
+$(warn '* in progress')"
 
 hr
 
@@ -123,19 +123,21 @@ select yn in "Yes" "No"; do
 
           ### Begin stage setup ###
 
-          say "\nPlease enter the server name (may be like this $(important server.yourdomain.com)):";
+          printf "\n"
 
-          read SERVER_NAME
-
-          say "Server name $(important $SERVER_NAME) will be used by default"
-
-          hr
-
-          say "Please enter email for sending notification after the success setup ($(warn 'WILL CONTAIN PASSWORDS'))!"
+          say "Please enter email for sending notification after the success setup $(warn '(WILL CONTAIN PASSWORDS!)')"
 
           read SUCCESS_MAIL
 
           say "Email $(important $SUCCESS_MAIL) will be used for success notification"
+
+          hr
+
+          say "Please enter the server name (may be like this $(important server.yourdomain.com)):";
+
+          read SERVER_NAME
+
+          say "Server name $(important $SERVER_NAME) will be used by default"
 
           ### End stage setup ###
 
