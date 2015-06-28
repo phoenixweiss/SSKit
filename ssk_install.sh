@@ -39,6 +39,7 @@ important() {
 
 hr() {
   say "- - - - - - - - - - - - - - -"
+  sleep 1.5s
 }
 
 any() {
@@ -118,11 +119,11 @@ select yn in "Yes" "No"; do
 
           ### Begin stage setup ###
 
-          say "Please enter the server name (may be like this $(important server.yourdomain.com)):";
+          say "\nPlease enter the server name (may be like this $(important server.yourdomain.com)):";
 
           read SERVER_NAME
 
-          echo "Server name $SERVER_NAME will be used by default"
+          say "Server name $SERVER_NAME will be used by default"
 
 
           ### End stage setup ###
