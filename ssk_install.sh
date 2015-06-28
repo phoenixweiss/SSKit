@@ -80,9 +80,11 @@ else
     if any 'brew'; then # for test on Mac
       say "Installing $(important curl) via brew"
       brew install curl
+      printf "\n"
     elif any 'apt-get'; then # on production Debian
       say "Installing $(important curl) via apt-get"
       apt-get install curl
+      printf "\n"
     else
       say "Please install $(important curl) manually then start the script again!"
       say "$(currtime)"
@@ -96,6 +98,8 @@ if [ -d "$to" ]; then
   rm -rf "$to" # Remove it recursively
   cd "$home"
 fi
+
+hr
 
 mkdir -p "$to" && cd "$to"
 say "Installing SSKit into $(pwd)"
