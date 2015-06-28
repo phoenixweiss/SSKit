@@ -109,6 +109,8 @@ chmod +x *.sh
 ln -s "$home/.sskit/ssk_install.sh" "/usr/local/bin/ssk_install" >/dev/null 2>&1
 ln -s "$home/.sskit/ssk_test.sh" "/usr/local/bin/ssk_test" >/dev/null 2>&1
 
+printf "\n"
+
 hr
 
 say "Installation completed. New global commands availible:
@@ -248,6 +250,7 @@ select yn in "Yes" "No"; do
           then
             test -f /root/.ssh/authorized_keys
             if [ $? -ne 0 ]
+            then
             say "Duplicate existing root authorized_keys to deploy user with proper rights"
             cp /root/.ssh/authorized_keys /home/deploy/.ssh/
             chmod 600 /home/deploy/.ssh/authorized_keys
