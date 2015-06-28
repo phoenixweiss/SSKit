@@ -192,6 +192,7 @@ select yn in "Yes" "No"; do
           apt-get update
           apt-get -y upgrade
           apt-get -y autoremove
+          apt-get -y install ssh
 
           ### End update ###
 
@@ -201,7 +202,7 @@ select yn in "Yes" "No"; do
 
           say "Install sudo"
 
-          apt-get -y install sudo
+          apt-get -y install sudo # TODO check if sudo exists
 
           say "Checking $(important 'deploy') user"
 
@@ -232,6 +233,9 @@ select yn in "Yes" "No"; do
 
           say "Generating deployment keys"
           ssh-keygen -b 2048 -t rsa -C "deploy@$SERVER_NAME" -f /home/deploy/.ssh/id_rsa -q -N ""
+          chmod -R 600 /home/deploy/.ssh/*
+          chown -R deploy /home/deploy/.ssh/*
+          chgrp -R deploy /home/deploy/.ssh/*
 
           say "There is your public deployment key:"
           hr
@@ -239,11 +243,18 @@ select yn in "Yes" "No"; do
           printf "\n"
           hr
 
-          say "Duplicate existing root keys to deploy user with proper rights"
-          cp /root/.ssh/authorized_keys /home/deploy/.ssh/
-          chmod -R 600 /home/deploy/.ssh/*
-          chown -R deploy /home/deploy/.ssh/*
-          chgrp -R deploy /home/deploy/.ssh/*
+          test -d /root/.ssh
+          if [ $? -ne 0 ]
+          then
+            test -f /root/.ssh/authorized_keys
+            if [ $? -ne 0 ]
+            say "Duplicate existing root authorized_keys to deploy user with proper rights"
+            cp /root/.ssh/authorized_keys /home/deploy/.ssh/
+            chmod 600 /home/deploy/.ssh/authorized_keys
+            chown deploy /home/deploy/.ssh/authorized_keys
+            chgrp deploy /home/deploy/.ssh/authorized_keys
+            fi
+          fi
 
           say "Make passwordless sudo for deploy"
           sed -i "s/.*PasswordAuthentication yes.*/PasswordAuthentication no/g" "/etc/ssh/sshd_config"
