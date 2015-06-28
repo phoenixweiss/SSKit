@@ -277,11 +277,23 @@ select yn in "Yes" "No"; do
           #
           # apt-get -t wheezy-backports install -y nginx
 
-          ### ###
+          ### Begin packages install ###
 
+          say "Install all necessary packages"
 
+          apt-get install -y debconf git git-core gcc make imagemagick libmagickwand-dev libcurl4-openssl-dev autoconf bison build-essential libssl-dev libyaml-dev libxml2-dev libxslt1-dev libreadline-dev zlib1g zlib1g-dev libncurses5-dev libffi-dev libgdbm3 libgdbm-dev
 
-          ### ###
+          printf "\n"
+
+          ### End packages install ###
+
+          hr
+
+          ###
+
+          
+
+          ###
 
           ### End stage setup ###
 
