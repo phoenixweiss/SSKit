@@ -154,6 +154,23 @@ select yn in "Yes" "No"; do
 
           hr
 
+          ### Begin locale generate ###
+
+          # TODO add more locales support
+          
+          say "We need to add other locale support. Right now only $(important 'ru_RU') is supported by SSKit"
+
+          if grep -q -x "ru_RU.UTF-8 UTF-8" "/etc/locale.gen"; then
+            say "Locale ru_RU found, generate"
+            locale-gen
+          else
+            say "Locale ru_RU not found, add and generate"
+            echo "ru_RU.UTF-8 UTF-8" >> "/etc/locale.gen"
+            locale-gen
+          fi
+
+          ### End locale generate ###
+
           ### End stage setup ###
 
           break
