@@ -383,6 +383,54 @@ select yn in "Yes" "No"; do
 
           ### End Passenger Setup ###
 
+          hr
+
+          ### Begin project structure ###
+
+          say "Create folder for projects"
+
+          su - deploy -c 'mkdir -p /home/deploy/projects/'
+
+          say "All projects goes here: $(important '/home/deploy/projects/')"
+
+          ### End project structure ###
+
+          hr
+
+          ### Begin postfix setup ###
+
+          say "Removing standard mailer exim4"
+          apt-get remove -y exim4 exim4-base exim4-config exim4-daemon-light
+          apt-get purge -y exim4 exim4-base exim4-config exim4-daemon-light
+
+          say "Install postfix"
+          apt-get update --fix-missing
+          echo $SERVER_NAME > "/etc/mailname"
+          debconf-set-selections <<< "postfix postfix/mailname string $SERVER_NAME"
+          debconf-set-selections <<< "postfix postfix/main_mailer_type string 'Internet Site'"
+          apt-get install -y postfix
+
+          ### End postfix setup ###
+
+          hr
+
+          ### Begin conclusion ###
+
+          say "\nОтчет об установке будет отправлен на почту $SUCCESS_MAIL\n\n"
+
+          say "Success notification sent on $(important $SUCCESS_MAIL)"
+
+          printf "Your server $SERVER_NAME successfully installed and ready to work!
+
+          mysql root password: $MYSQL_PASSWORD
+
+          Public deployment key:
+          $(cat /home/deploy/.ssh/id_rsa.pub)" | mail -s "Stage setup on $SERVER_NAME success" $SUCCESS_MAIL
+
+          ### End conclusion ###
+
+          printf "\n"
+
           ### End stage setup ###
 
           break
@@ -398,6 +446,8 @@ done
 hr
 
 say "Bye, $USER!"
+
+say "Please, do not forget to $(important 'reboot') server! Please do it manually!"
 
 say "$(currtime)"
 
