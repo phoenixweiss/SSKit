@@ -1,5 +1,19 @@
 #!/bin/bash
 
+### Begin define variables ###
+
+home=$(sh -c "echo ~$(whoami)") # Great idea to safely define home by Ben Hoskings, author of "babushka" https://github.com/benhoskings/babushka
+ostype=$(uname -s) # Checks OS type
+from="https://github.com/phoenixweiss/sskit/archive/master.tar.gz" # Source
+to="$home/.sskit" # Destination
+
+### End define variables ###
+
+# TODO gather full information about release
+# lsb_release -i # ID
+# lsb_release -r # Version release
+# lsb_release -c # Codename
+
 ### Begin define functions ###
 
 logo() {

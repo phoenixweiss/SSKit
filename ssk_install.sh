@@ -2,27 +2,20 @@
 
 clear
 
-### Define variables ###
-
-home=$(sh -c "echo ~$(whoami)") # Great idea to safely define home by Ben Hoskings, author of "babushka" https://github.com/benhoskings/babushka
-from="https://github.com/phoenixweiss/sskit/archive/master.tar.gz" # Source
-to="$home/.sskit" # Destination
-ostype=$(uname -s) # Checks OS type
+### Begin SSKit init ###
 
 type "got_ssk" &> /dev/null
-
 if [ $? -ne 0 ]; then
-  wget -O- -q https://raw.githubusercontent.com/phoenixweiss/sskit/master/ssk_init.sh >> $home/.profile
-  . $home/.profile
+  wget -O- -q https://raw.githubusercontent.com/phoenixweiss/sskit/master/ssk_init.sh >> ~/.profile
+  . ~/.profile
   export -f got_ssk # Export function for check SSKit availibility
 fi
 
-# TODO gather full information about release
-# lsb_release -i # ID
-# lsb_release -r # Version release
-# lsb_release -c # Codename
+### End SSKit init ###
 
-### Begin script ###
+printf "\n"
+
+### Begin main script ###
 
 say "$(currtime)"
 
@@ -398,5 +391,7 @@ say "Bye, $USER!"
 say "Please, do not forget to $(important 'reboot') server! Please do it manually!"
 
 say "$(currtime)"
+
+### End main script ###
 
 exit 0 # Success exit
