@@ -117,6 +117,11 @@ $(warn '* in progress')"
 
 hr
 
+if $(uname -s) != "Linux"; then
+  say "Right at this moment further setup is possible $(warn 'ONLY') on Linux OS"
+  exit 1
+fi
+
 say "Do you want to further server setup? You always be able to do it later with $(important 'sudo ssk_install')"
 
 select yn in "Yes" "No"; do
@@ -145,6 +150,7 @@ select yn in "Yes" "No"; do
 
           break
           ;;
+          
         No )
           say "$(currtime)"
           exit 0 # Exit without further setup
