@@ -64,6 +64,10 @@ oscodename() {
   echo "$(lsb_release -c)" | sed 's/.*:\t//' # Extracts release codename
 }
 
+canonize() {
+  echo "$1" | sed 's/[^a-zA-Z0-9]//g' # Canonization for any string
+}
+
 rootonly() {
   if [ $EUID -ne 0 ]; then
     say "The script $0 must run under $(important root) privileges!"
