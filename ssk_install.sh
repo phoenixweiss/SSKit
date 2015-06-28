@@ -223,8 +223,7 @@ select yn in "Yes" "No"; do
           fi
 
           say "Checking for .ssh directory"
-          test -d /home/deploy/.ssh
-          if [ $? -ne 0 ]
+          if [ -d /home/deploy/.ssh ]
           then
             say "There is no $(important '.ssh') directory, create new with proper rights"
             mkdir /home/deploy/.ssh
@@ -245,11 +244,10 @@ select yn in "Yes" "No"; do
           printf "\n"
           hr
 
-          test -d /root/.ssh
-          if [ $? -eq 0 ]
+          if [ ! -d /root/.ssh ]
           then
-            test -f /root/.ssh/authorized_keys
-            if [ $? -eq 0 ]
+
+            if [ ! -f /root/.ssh/authorized_keys ]
             then
             say "Duplicate existing root authorized_keys to deploy user with proper rights"
             cp /root/.ssh/authorized_keys /home/deploy/.ssh/
@@ -257,6 +255,7 @@ select yn in "Yes" "No"; do
             chown deploy /home/deploy/.ssh/authorized_keys
             chgrp deploy /home/deploy/.ssh/authorized_keys
             fi
+
           fi
 
           say "Make passwordless sudo for deploy"
