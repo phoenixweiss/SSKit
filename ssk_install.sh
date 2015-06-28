@@ -51,6 +51,10 @@ any() {
   type "$1" >/dev/null 2>&1 # Check availibility of something
 }
 
+pass_gen() {
+  echo "$(date +%s | md5sum | base64 | head -c $1)" # Generates N-character-based random password
+}
+
 got_ssk() {
   true # Check SSKit availible in current session
 }
@@ -289,11 +293,23 @@ select yn in "Yes" "No"; do
 
           hr
 
-          ###
+          ### Begin MySQL Setup ###
 
-          
+          say "Setup MySQL with random generated password"
+          MYSQL_PASSWORD="$(pass_gen 16)"
+          say "Your MySQL password is $(important $MYSQL_PASSWORD)"
+          debconf-set-selections <<< "mysql-server mysql-server/root_password password $MYSQL_PASSWORD"
+          debconf-set-selections <<< "mysql-server mysql-server/root_password_again password $MYSQL_PASSWORD"
+          apt-get -y install mysql-server mysql-client libmysqlclient-dev
 
-          ###
+          say "Make $(important 'max_allowed_packet') 64M"
+          sed -i "s|.*max_allowed_packet.*|max_allowed_packet = 64M|" /etc/mysql/my.cnf
+
+          # TODO ln -s /run/mysqld/mysqld.sock /tmp/mysql.sock
+
+          service mysql restart
+
+          ### End MySQL Setup ###
 
           ### End stage setup ###
 
