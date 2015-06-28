@@ -311,6 +311,39 @@ select yn in "Yes" "No"; do
 
           ### End MySQL Setup ###
 
+          hr
+
+          ### Begin rbenv and ruby setup ###
+
+          say "Installing $(important 'rbenv') for user deploy"
+          su - deploy -c 'curl https://raw.githubusercontent.com/fesplugas/rbenv-installer/master/bin/rbenv-installer | bash' # TODO make another installer mysqlf
+
+          echo 'export RBENV_ROOT="/home/deploy/.rbenv"' >> /home/deploy/.profile
+
+          printf '
+            if [ -d "${RBENV_ROOT}" ]; then
+              export PATH="${RBENV_ROOT}/bin:${PATH}"
+              eval "$(rbenv init -)"
+            fi
+          ' >> /home/deploy/.profile
+
+          su - deploy -c 'source /home/deploy/.profile'
+
+          say "Install the latest ruby version" # TODO make version input or selector
+          su - deploy -c 'rbenv install 2.2.2'
+          su - deploy -c 'rbenv global 2.2.2'
+          su - deploy -c 'rbenv rehash'
+
+          say "Ruby version check"
+          su - deploy -c 'ruby -v'
+
+          say "Gem update and bundler install"
+          su - deploy -c 'echo "gem: --no-ri --no-rdoc" > /home/deploy/.gemrc'
+          su - deploy -c 'gem update --system'
+          su - deploy -c 'gem install bundler'
+
+          ### End rbenv and ruby setup ###
+
           ### End stage setup ###
 
           break
