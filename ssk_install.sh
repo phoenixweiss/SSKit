@@ -62,6 +62,8 @@ say "$(currtime)"
 
 logo
 
+sleep 2s
+
 say "Hello, $USER! You run SSKit script under $(uname -s) Operating System."
 
 if [ $EUID -ne 0 ]; then
