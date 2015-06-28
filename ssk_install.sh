@@ -118,7 +118,7 @@ $(warn '* in progress')"
 
 hr
 
-if $ostype != "Linux"; then
+if ["$ostype" != "Linux"]; then
   say "Right at this moment further setup is possible $(warn 'ONLY') on Linux OS"
   exit 1
 fi
