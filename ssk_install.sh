@@ -152,7 +152,6 @@ select yn in "Yes" "No"; do
           say "Please enter the new hostname (may be like this $(important server.yourdomain.com)):";
 
           read SERVER_NAME # TODO make sure server name not empty
-          grep $(hostname) "/etc/hosts"
           sed -i "s/$(hostname)/$SERVER_NAME/g" /etc/hosts
           echo $SERVER_NAME > /etc/hostname
 
@@ -177,7 +176,77 @@ select yn in "Yes" "No"; do
             locale-gen
           fi
 
+          printf "\n"
+
           ### End locale generate ###
+
+          hr
+
+          ### Begin update ###
+
+          say "Update all"
+          apt-get update
+          apt-get -y upgrade
+          apt-get -y autoremove
+
+          ### End update ###
+
+          hr
+
+          ### Begin prepare deploy user ###
+
+          say "Install sudo"
+
+          apt-get -y install sudo
+
+          say "Checking $(important 'deploy') user"
+
+          id -u deploy &> /dev/null
+
+          if [ $? -ne 0 ]
+          then
+            say "There is no user $(important 'deploy'), create new with same name group and make him sudoer"
+            groupadd -f deploy
+            useradd -m -g deploy -s /bin/bash deploy
+            chmod +w /etc/sudoers
+            echo "deploy ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
+            chmod -w /etc/sudoers
+          else
+            say "User $(important 'deploy') already exists"
+          fi
+
+          say "Checking for .ssh directory"
+          test -d /home/deploy/.ssh
+          if [ $? -ne 0 ]
+          then
+            say "There is no $(important '.ssh') directory, create new with proper rights"
+            mkdir /home/deploy/.ssh
+            chmod 700 /home/deploy/.ssh
+            chown deploy /home/deploy/.ssh
+            chgrp deploy /home/deploy/.ssh
+          fi
+
+          say "Generating deployment keys"
+          ssh-keygen -b 2048 -t rsa -C "deploy@$SERVER_NAME" -f /home/deploy/.ssh/id_rsa -q -N ""
+
+          say "There is your public deployment key:"
+          hr
+          important "$(cat /home/deploy/.ssh/id_rsa.pub)"
+          hr
+
+          say "Duplicate existing root keys to deploy user with proper rights"
+          cp /root/.ssh/authorized_keys /home/deploy/.ssh/
+          chmod -R 600 /home/deploy/.ssh/*
+          chown -R deploy /home/deploy/.ssh/*
+          chgrp -R deploy /home/deploy/.ssh/*
+
+          say "Make passwordless sudo for deploy"
+          sed -i "s/.*PasswordAuthentication yes.*/PasswordAuthentication no/g" "/etc/ssh/sshd_config"
+          service ssh restart
+
+          ### End prepare deploy user ###
+
+          hr
 
           ### End stage setup ###
 
