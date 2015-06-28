@@ -223,7 +223,7 @@ select yn in "Yes" "No"; do
           fi
 
           say "Checking for .ssh directory"
-          if [ -d /home/deploy/.ssh ]
+          if [ ! -d /home/deploy/.ssh ]
           then
             say "There is no $(important '.ssh') directory, create new with proper rights"
             mkdir /home/deploy/.ssh
@@ -244,10 +244,10 @@ select yn in "Yes" "No"; do
           printf "\n"
           hr
 
-          if [ ! -d /root/.ssh ]
+          if [ -d /root/.ssh ]
           then
 
-            if [ ! -f /root/.ssh/authorized_keys ]
+            if [ -f /root/.ssh/authorized_keys ]
             then
             say "Duplicate existing root authorized_keys to deploy user with proper rights"
             cp /root/.ssh/authorized_keys /home/deploy/.ssh/
