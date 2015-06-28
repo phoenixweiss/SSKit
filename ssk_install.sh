@@ -9,7 +9,9 @@ from="https://github.com/phoenixweiss/sskit/archive/master.tar.gz" # Source
 to="$home/.sskit" # Destination
 ostype=$(uname -s) # Checks OS type
 
-if [ ! type "got_ssk" >/dev/null 2>&1 ]; then
+type "got_ssk" &> /dev/null
+
+if [ $? -ne 0 ]; then
   wget -O- -q https://raw.githubusercontent.com/phoenixweiss/sskit/master/ssk_init.sh >> $home/.profile
   . $home/.profile
   export -f got_ssk # Export function for check SSKit availibility
