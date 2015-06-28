@@ -83,7 +83,7 @@ else
       printf "\n"
     elif any 'apt-get'; then # on production Debian
       say "Installing $(important curl) via apt-get"
-      apt-get install curl
+      apt-get -y install curl
       printf "\n"
     else
       say "Please install $(important curl) manually then start the script again!"
