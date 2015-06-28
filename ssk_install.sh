@@ -111,7 +111,18 @@ say "Do you want to further server setup? You always be able to do it later with
 select yn in "Yes" "No"; do
     case $yn in
         Yes )
-          say "good";
+
+          ### Begin stage setup ###
+
+          say "Please enter the server name (may be like this $(important server.yourdomain.com)):";
+
+          read SERVER_NAME
+
+          echo "Server name $SERVER_NAME will be used by default"
+
+
+          ### End stage setup ###
+
           break
           ;;
         No )
