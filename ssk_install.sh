@@ -37,6 +37,10 @@ important() {
   echo -e "\e[7m$1\e[27m" # Show importance of some info such as passwords
 }
 
+warn() {
+  echo -e "\e[31mTEST\e[0m"
+}
+
 hr() {
   say "- - - - - - - - - - - - - - -"
   sleep 1.5s
@@ -125,6 +129,13 @@ select yn in "Yes" "No"; do
 
           say "Server name $SERVER_NAME will be used by default"
 
+          hr
+
+          say "Please enter email for sending notification after the success setup ($(warn 'WILL CONTAIN PASSWORDS'))!"
+
+          read SUCCESS_MAIL
+
+          say "Email $SUCCESS_MAIL will be used for success notification"
 
           ### End stage setup ###
 
