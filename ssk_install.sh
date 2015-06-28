@@ -97,12 +97,16 @@ chmod +x *.sh
 ln -s "$home/.sskit/ssk_install.sh" "/usr/local/bin/ssk_install" >/dev/null 2>&1
 ln -s "$home/.sskit/ssk_test.sh" "/usr/local/bin/ssk_test" >/dev/null 2>&1
 
+hr
+
 say "Installation completed. New global commands availible:
-1. $(important 'ssk_install')
-2. $(important 'ssk_mkstage')
-3. $(important 'ssk_dbcreate')
-4. $(important 'ssk_test')
-Do not forget to use sudo for execute them!"
+1. $(important 'ssk_install') (this script)
+2. $(important 'ssk_mkstage') (creates stage for project with nginx config and new db) *
+3. $(important 'ssk_dbcreate') (creates only new db) *
+4. $(important 'ssk_test') (test script for debug)
+Do not forget to use sudo for execute them!
+
+* in progress"
 
 hr
 
@@ -131,6 +135,10 @@ select yn in "Yes" "No"; do
           ;;
     esac
 done
+
+hr
+
+say "Bye, $USER!"
 
 say "$(currtime)"
 
