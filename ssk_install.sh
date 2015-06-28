@@ -133,13 +133,19 @@ select yn in "Yes" "No"; do
 
           printf "\n"
 
+          ### Begin Email reading ###
+
           say "Please enter email for sending notification after the success setup $(warn '(WILL CONTAIN PASSWORDS!)')"
 
           read SUCCESS_MAIL # TODO make sure email not empty
 
           say "Email $(important $SUCCESS_MAIL) will be used for success notification"
 
+          ### End Email reading ###
+
           hr
+
+          ### Begin hostname handling ###
 
           say "Current hostname is: $(hostname)"
 
@@ -152,12 +158,14 @@ select yn in "Yes" "No"; do
 
           say "Server name $(important $SERVER_NAME) will be used by default hostname"
 
+          ### End hostname handling ###
+
           hr
 
           ### Begin locale generate ###
 
           # TODO add more locales support
-          
+
           say "We need to add other locale support. Right now only $(important 'ru_RU') is supported by SSKit"
 
           if grep -q -x "ru_RU.UTF-8 UTF-8" "/etc/locale.gen"; then
