@@ -135,17 +135,24 @@ select yn in "Yes" "No"; do
 
           say "Please enter email for sending notification after the success setup $(warn '(WILL CONTAIN PASSWORDS!)')"
 
-          read SUCCESS_MAIL
+          read SUCCESS_MAIL # TODO make sure email not empty
 
           say "Email $(important $SUCCESS_MAIL) will be used for success notification"
 
           hr
 
-          say "Please enter the server name (may be like this $(important server.yourdomain.com)):";
+          say "Current hostname is: $(hostname)"
 
-          read SERVER_NAME
+          say "Please enter the new hostname (may be like this $(important server.yourdomain.com)):";
 
-          say "Server name $(important $SERVER_NAME) will be used by default"
+          read SERVER_NAME # TODO make sure server name not empty
+          grep $(hostname) "/etc/hosts"
+          sed -i "s/$(hostname)/$SERVER_NAME/g" /etc/hosts
+          echo $SERVER_NAME > /etc/hostname
+
+          say "Server name $(important $SERVER_NAME) will be used by default hostname"
+
+          hr
 
           ### End stage setup ###
 
