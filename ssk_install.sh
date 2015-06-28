@@ -7,6 +7,7 @@ clear
 home=$(sh -c "echo ~$(whoami)") # Great idea to safely define home by Ben Hoskings, author of "babushka" https://github.com/benhoskings/babushka
 from="https://github.com/phoenixweiss/sskit/archive/master.tar.gz" # Source
 to="$home/.sskit" # Destination
+ostype=$(uname -s) # Checks OS type
 
 ### Define functions ###
 
@@ -64,7 +65,7 @@ logo
 
 sleep 2s
 
-say "Hello, $USER! You run SSKit script under $(uname -s) Operating System."
+say "Hello, $USER! You run SSKit script under $ostype Operating System."
 
 if [ $EUID -ne 0 ]; then
   say "The script $0 must run under $(important root) privileges!"
@@ -117,7 +118,7 @@ $(warn '* in progress')"
 
 hr
 
-if $(uname -s) != "Linux"; then
+if ostype != "Linux"; then
   say "Right at this moment further setup is possible $(warn 'ONLY') on Linux OS"
   exit 1
 fi
@@ -150,7 +151,7 @@ select yn in "Yes" "No"; do
 
           break
           ;;
-          
+
         No )
           say "$(currtime)"
           exit 0 # Exit without further setup
