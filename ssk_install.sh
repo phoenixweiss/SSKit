@@ -248,6 +248,23 @@ select yn in "Yes" "No"; do
 
           hr
 
+          # TODO separate nginx install like this
+          #
+          # if grep -q "deb http://ftp.ru.debian.org/debian/ wheezy-backports main contrib non-free" "/etc/apt/sources.list"; then
+          #   apt-get update
+          # else
+          #   echo "deb http://ftp.ru.debian.org/debian/ wheezy-backports main contrib non-free" >> "/etc/apt/sources.list"
+          #   apt-get update
+          # fi
+          #
+          # apt-get -t wheezy-backports install -y nginx
+
+          ### ###
+
+
+
+          ### ###
+
           ### End stage setup ###
 
           break
