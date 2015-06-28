@@ -38,7 +38,7 @@ important() {
 }
 
 warn() {
-  echo -e "\e[31mTEST\e[0m"
+  echo -e "\e[31m$1\e[39m" # Text for warnings
 }
 
 hr() {
@@ -127,7 +127,7 @@ select yn in "Yes" "No"; do
 
           read SERVER_NAME
 
-          say "Server name $SERVER_NAME will be used by default"
+          say "Server name $(important $SERVER_NAME) will be used by default"
 
           hr
 
@@ -135,7 +135,7 @@ select yn in "Yes" "No"; do
 
           read SUCCESS_MAIL
 
-          say "Email $SUCCESS_MAIL will be used for success notification"
+          say "Email $(important $SUCCESS_MAIL) will be used for success notification"
 
           ### End stage setup ###
 
