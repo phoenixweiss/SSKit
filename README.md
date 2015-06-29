@@ -25,13 +25,13 @@ Make sure you know sudo password(if any).
 Install using __curl__
 
 ```
-curl https://raw.githubusercontent.com/phoenixweiss/sskit/master/ssk_install.sh | sudo bash
+curl -O https://raw.githubusercontent.com/phoenixweiss/sskit/master/ssk_install.sh && sudo bash ssk_install.sh
 ```
 
 Install using __wget__
 
 ```
-wget -O- -q https://raw.githubusercontent.com/phoenixweiss/sskit/master/ssk_install.sh | sudo bash
+wget https://raw.githubusercontent.com/phoenixweiss/sskit/master/ssk_install.sh -v -O ssk_install.sh && chmod +x ssk_install.sh && sudo bash ssk_install.sh
 ```
 
 ## Notes:
