@@ -87,7 +87,7 @@ say "Do you want to further server setup? You always be able to do it later with
 
 read -r -p "Continue (y/N)? " choice
 case $choice in
-[yY][eE][sS]|[yY] )
+[yY][eE][sS] | [yY] )
 
       ### Begin stage setup ###
 
