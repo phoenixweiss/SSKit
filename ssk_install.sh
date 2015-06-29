@@ -85,304 +85,303 @@ fi
 
 say "Do you want to further server setup? You always be able to do it later with $(important 'sudo ssk_install')"
 
-select yn in "Yes" "No"; do
-    case $yn in
-        Yes )
+read -p "Continue (y/N)?" choice
+case $choice in
+    [yY][eE][sS]|[yY] )
 
-          ### Begin stage setup ###
+      ### Begin stage setup ###
 
-          printf "\n"
+      printf "\n"
 
-          ### Begin Email reading ###
+      ### Begin Email reading ###
 
-          say "Please enter email for sending notification after the success setup $(warn '(WILL CONTAIN PASSWORDS!)')"
+      say "Please enter email for sending notification after the success setup $(warn '(WILL CONTAIN PASSWORDS!)')"
 
-          read SUCCESS_MAIL # TODO make sure email not empty
+      read SUCCESS_MAIL # TODO make sure email not empty
 
-          say "Email $(important $SUCCESS_MAIL) will be used for success notification"
+      say "Email $(important $SUCCESS_MAIL) will be used for success notification"
 
-          ### End Email reading ###
+      ### End Email reading ###
 
-          hr
+      hr
 
-          ### Begin hostname handling ###
+      ### Begin hostname handling ###
 
-          say "Current hostname is: $(hostname)"
+      say "Current hostname is: $(hostname)"
 
-          say "Please enter the new hostname (may be like this $(important server.yourdomain.com)):";
+      say "Please enter the new hostname (may be like this $(important server.yourdomain.com)):";
 
-          read SERVER_NAME # TODO make sure server name not empty
-          sed -i "s/$(hostname)/$SERVER_NAME/g" /etc/hosts
-          echo $SERVER_NAME > /etc/hostname
+      read SERVER_NAME # TODO make sure server name not empty
+      sed -i "s/$(hostname)/$SERVER_NAME/g" /etc/hosts
+      echo $SERVER_NAME > /etc/hostname
 
-          say "Server name $(important $SERVER_NAME) will be used by default hostname"
+      say "Server name $(important $SERVER_NAME) will be used by default hostname"
 
-          ### End hostname handling ###
+      ### End hostname handling ###
 
-          hr
+      hr
 
-          ### Begin locale generate ###
+      ### Begin locale generate ###
 
-          # TODO add more locales support
+      # TODO add more locales support
 
-          say "We need to add other locale support. Right now only $(important 'ru_RU') is supported by SSKit"
+      say "We need to add other locale support. Right now only $(important 'ru_RU') is supported by SSKit"
 
-          if grep -q -x "ru_RU.UTF-8 UTF-8" "/etc/locale.gen"; then
-            say "Locale ru_RU found, generate"
-            locale-gen
-          else
-            say "Locale ru_RU not found, add and generate"
-            echo "ru_RU.UTF-8 UTF-8" >> "/etc/locale.gen"
-            locale-gen
-          fi
+      if grep -q -x "ru_RU.UTF-8 UTF-8" "/etc/locale.gen"; then
+        say "Locale ru_RU found, generate"
+        locale-gen
+      else
+        say "Locale ru_RU not found, add and generate"
+        echo "ru_RU.UTF-8 UTF-8" >> "/etc/locale.gen"
+        locale-gen
+      fi
 
-          printf "\n"
+      printf "\n"
 
-          ### End locale generate ###
+      ### End locale generate ###
 
-          hr
+      hr
 
-          ### Begin update ###
+      ### Begin update ###
 
-          say "Update all"
-          apt-get update
-          apt-get -y upgrade
-          apt-get -y autoremove
-          apt-get -y install ssh
+      say "Update all"
+      apt-get update
+      apt-get -y upgrade
+      apt-get -y autoremove
+      apt-get -y install ssh
 
-          ### End update ###
+      ### End update ###
 
-          hr
+      hr
 
-          ### Begin prepare deploy user ###
+      ### Begin prepare deploy user ###
 
-          say "Install sudo"
+      say "Install sudo"
 
-          apt-get -y install sudo # TODO check if sudo exists
+      apt-get -y install sudo # TODO check if sudo exists
 
-          say "Checking $(important 'deploy') user"
+      say "Checking $(important 'deploy') user"
 
-          id -u deploy &> /dev/null
+      id -u deploy &> /dev/null
 
-          if [ $? -ne 0 ]
-          then
-            say "There is no user $(important 'deploy'), create new with same name group and make him sudoer"
-            groupadd -f deploy
-            useradd -m -g deploy -s /bin/bash deploy
-            chmod +w /etc/sudoers
-            echo "deploy ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
-            chmod -w /etc/sudoers
-          else
-            say "User $(important 'deploy') already exists"
-          fi
+      if [ $? -ne 0 ]
+      then
+        say "There is no user $(important 'deploy'), create new with same name group and make him sudoer"
+        groupadd -f deploy
+        useradd -m -g deploy -s /bin/bash deploy
+        chmod +w /etc/sudoers
+        echo "deploy ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
+        chmod -w /etc/sudoers
+      else
+        say "User $(important 'deploy') already exists"
+      fi
 
-          say "Checking for .ssh directory"
-          if [ ! -d /home/deploy/.ssh ]
-          then
-            say "There is no $(important '.ssh') directory, create new with proper rights"
-            mkdir /home/deploy/.ssh
-            chmod 700 /home/deploy/.ssh
-            chown deploy /home/deploy/.ssh
-            chgrp deploy /home/deploy/.ssh
-          fi
+      say "Checking for .ssh directory"
+      if [ ! -d /home/deploy/.ssh ]
+      then
+        say "There is no $(important '.ssh') directory, create new with proper rights"
+        mkdir /home/deploy/.ssh
+        chmod 700 /home/deploy/.ssh
+        chown deploy /home/deploy/.ssh
+        chgrp deploy /home/deploy/.ssh
+      fi
 
-          say "Generating deployment keys"
-          ssh-keygen -b 2048 -t rsa -C "deploy@$SERVER_NAME" -f /home/deploy/.ssh/id_rsa -q -N ""
-          chmod -R 600 /home/deploy/.ssh/*
-          chown -R deploy /home/deploy/.ssh/*
-          chgrp -R deploy /home/deploy/.ssh/*
+      say "Generating deployment keys"
+      ssh-keygen -b 2048 -t rsa -C "deploy@$SERVER_NAME" -f /home/deploy/.ssh/id_rsa -q -N ""
+      chmod -R 600 /home/deploy/.ssh/*
+      chown -R deploy /home/deploy/.ssh/*
+      chgrp -R deploy /home/deploy/.ssh/*
 
-          say "There is your public deployment key:"
-          hr
-          important "$(cat /home/deploy/.ssh/id_rsa.pub)"
-          printf "\n"
-          hr
+      say "There is your public deployment key:"
+      hr
+      important "$(cat /home/deploy/.ssh/id_rsa.pub)"
+      printf "\n"
+      hr
 
-          if [ -d /root/.ssh ]
-          then
+      if [ -d /root/.ssh ]
+      then
 
-            if [ -f /root/.ssh/authorized_keys ]
-            then
-            say "Duplicate existing root authorized_keys to deploy user with proper rights"
-            cp /root/.ssh/authorized_keys /home/deploy/.ssh/
-            chmod 600 /home/deploy/.ssh/authorized_keys
-            chown deploy /home/deploy/.ssh/authorized_keys
-            chgrp deploy /home/deploy/.ssh/authorized_keys
-            fi
+        if [ -f /root/.ssh/authorized_keys ]
+        then
+        say "Duplicate existing root authorized_keys to deploy user with proper rights"
+        cp /root/.ssh/authorized_keys /home/deploy/.ssh/
+        chmod 600 /home/deploy/.ssh/authorized_keys
+        chown deploy /home/deploy/.ssh/authorized_keys
+        chgrp deploy /home/deploy/.ssh/authorized_keys
+        fi
 
-          fi
+      fi
 
-          say "Make passwordless sudo for deploy"
-          sed -i "s/.*PasswordAuthentication yes.*/PasswordAuthentication no/g" "/etc/ssh/sshd_config"
-          service ssh restart
+      say "Make passwordless sudo for deploy"
+      sed -i "s/.*PasswordAuthentication yes.*/PasswordAuthentication no/g" "/etc/ssh/sshd_config"
+      service ssh restart
 
-          ### End prepare deploy user ###
+      ### End prepare deploy user ###
 
-          hr
+      hr
 
-          # TODO separate nginx install like this
-          #
-          # if grep -q "deb http://ftp.ru.debian.org/debian/ wheezy-backports main contrib non-free" "/etc/apt/sources.list"; then
-          #   apt-get update
-          # else
-          #   echo "deb http://ftp.ru.debian.org/debian/ wheezy-backports main contrib non-free" >> "/etc/apt/sources.list"
-          #   apt-get update
-          # fi
-          #
-          # apt-get -t wheezy-backports install -y nginx
+      # TODO separate nginx install like this
+      #
+      # if grep -q "deb http://ftp.ru.debian.org/debian/ wheezy-backports main contrib non-free" "/etc/apt/sources.list"; then
+      #   apt-get update
+      # else
+      #   echo "deb http://ftp.ru.debian.org/debian/ wheezy-backports main contrib non-free" >> "/etc/apt/sources.list"
+      #   apt-get update
+      # fi
+      #
+      # apt-get -t wheezy-backports install -y nginx
 
-          ### Begin packages install ###
+      ### Begin packages install ###
 
-          say "Install all necessary packages"
+      say "Install all necessary packages"
 
-          apt-get install -y debconf lsb-core git git-core gcc make imagemagick libmagickwand-dev libcurl4-openssl-dev autoconf bison build-essential libssl-dev libyaml-dev libxml2-dev libxslt1-dev libreadline-dev zlib1g zlib1g-dev libncurses5-dev libffi-dev libgdbm3 libgdbm-dev
+      apt-get install -y debconf lsb-core git git-core gcc make imagemagick libmagickwand-dev libcurl4-openssl-dev autoconf bison build-essential libssl-dev libyaml-dev libxml2-dev libxslt1-dev libreadline-dev zlib1g zlib1g-dev libncurses5-dev libffi-dev libgdbm3 libgdbm-dev
 
-          printf "\n"
+      printf "\n"
 
-          ### End packages install ###
+      ### End packages install ###
 
-          hr
+      hr
 
-          ### Begin MySQL Setup ###
+      ### Begin MySQL Setup ###
 
-          say "Setup MySQL with random generated password"
-          MYSQL_PASSWORD="$(pass_gen 16)"
-          say "Your MySQL password is $(important $MYSQL_PASSWORD)"
-          debconf-set-selections <<< "mysql-server mysql-server/root_password password $MYSQL_PASSWORD"
-          debconf-set-selections <<< "mysql-server mysql-server/root_password_again password $MYSQL_PASSWORD"
-          apt-get -y install mysql-server mysql-client libmysqlclient-dev
+      say "Setup MySQL with random generated password"
+      MYSQL_PASSWORD="$(pass_gen 16)"
+      say "Your MySQL password is $(important $MYSQL_PASSWORD)"
+      debconf-set-selections <<< "mysql-server mysql-server/root_password password $MYSQL_PASSWORD"
+      debconf-set-selections <<< "mysql-server mysql-server/root_password_again password $MYSQL_PASSWORD"
+      apt-get -y install mysql-server mysql-client libmysqlclient-dev
 
-          say "Make $(important 'max_allowed_packet') 64M"
-          sed -i "s|.*max_allowed_packet.*|max_allowed_packet = 64M|" /etc/mysql/my.cnf
+      say "Make $(important 'max_allowed_packet') 64M"
+      sed -i "s|.*max_allowed_packet.*|max_allowed_packet = 64M|" /etc/mysql/my.cnf
 
-          # TODO ln -s /run/mysqld/mysqld.sock /tmp/mysql.sock
+      # TODO ln -s /run/mysqld/mysqld.sock /tmp/mysql.sock
 
-          service mysql restart
+      service mysql restart
 
-          ### End MySQL Setup ###
+      ### End MySQL Setup ###
 
-          hr
+      hr
 
-          ### Begin rbenv and ruby setup ###
+      ### Begin rbenv and ruby setup ###
 
-          say "Installing $(important 'rbenv') for user deploy"
-          su - deploy -c 'curl https://raw.githubusercontent.com/fesplugas/rbenv-installer/master/bin/rbenv-installer | bash' # TODO make another installer myself
+      say "Installing $(important 'rbenv') for user deploy"
+      su - deploy -c 'curl https://raw.githubusercontent.com/fesplugas/rbenv-installer/master/bin/rbenv-installer | bash' # TODO make another installer myself
 
-          echo 'export RBENV_ROOT="/home/deploy/.rbenv"' >> /home/deploy/.profile
+      echo 'export RBENV_ROOT="/home/deploy/.rbenv"' >> /home/deploy/.profile
 
-          printf '
-            if [ -d "${RBENV_ROOT}" ]; then
-              export PATH="${RBENV_ROOT}/bin:${PATH}"
-              eval "$(rbenv init -)"
-            fi
-          ' >> /home/deploy/.profile
+      printf '
+        if [ -d "${RBENV_ROOT}" ]; then
+          export PATH="${RBENV_ROOT}/bin:${PATH}"
+          eval "$(rbenv init -)"
+        fi
+      ' >> /home/deploy/.profile
 
-          su - deploy -c 'source /home/deploy/.profile'
+      su - deploy -c 'source /home/deploy/.profile'
 
-          say "Install the latest ruby version" # TODO make version input or selector
-          su - deploy -c 'rbenv install 2.2.2'
-          su - deploy -c 'rbenv global 2.2.2'
-          su - deploy -c 'rbenv rehash'
+      say "Install the latest ruby version" # TODO make version input or selector
+      su - deploy -c 'rbenv install 2.2.2'
+      su - deploy -c 'rbenv global 2.2.2'
+      su - deploy -c 'rbenv rehash'
 
-          say "Ruby version check"
-          su - deploy -c 'ruby -v'
+      say "Ruby version check"
+      su - deploy -c 'ruby -v'
 
-          say "Gem update and bundler install"
-          su - deploy -c 'echo "gem: --no-ri --no-rdoc" > /home/deploy/.gemrc'
-          su - deploy -c 'gem update --system'
-          su - deploy -c 'gem install bundler'
+      say "Gem update and bundler install"
+      su - deploy -c 'echo "gem: --no-ri --no-rdoc" > /home/deploy/.gemrc'
+      su - deploy -c 'gem update --system'
+      su - deploy -c 'gem install bundler'
 
-          ### End rbenv and ruby setup ###
+      ### End rbenv and ruby setup ###
 
-          hr
+      hr
 
-          ### Begin Passenger Setup ###
+      ### Begin Passenger Setup ###
 
-          say "Install Passenger and make all necessary configuration"
+      say "Install Passenger and make all necessary configuration"
 
-          apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 561F9B9CAC40B2F7
+      apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 561F9B9CAC40B2F7
 
-          apt-get install -y apt-transport-https ca-certificates
+      apt-get install -y apt-transport-https ca-certificates
 
-          echo "deb https://oss-binaries.phusionpassenger.com/apt/passenger $(oscodename) main" > /etc/apt/sources.list.d/passenger.list
+      echo "deb https://oss-binaries.phusionpassenger.com/apt/passenger $(oscodename) main" > /etc/apt/sources.list.d/passenger.list
 
-          chown root /etc/apt/sources.list.d/passenger.list
-          chmod 600 /etc/apt/sources.list.d/passenger.list
-          apt-get update
+      chown root /etc/apt/sources.list.d/passenger.list
+      chmod 600 /etc/apt/sources.list.d/passenger.list
+      apt-get update
 
-          apt-get install -y --force-yes nginx-full nginx-extras passenger
+      apt-get install -y --force-yes nginx-full nginx-extras passenger
 
-          apt-get update --fix-missing
-          apt-get -y autoremove
+      apt-get update --fix-missing
+      apt-get -y autoremove
 
-          sed -i "s|www-data;|deploy;|g" "/etc/nginx/nginx.conf"
-          sed -i "s|# passenger_root.*|passenger_root $(/usr/bin/passenger-config --root);|" /etc/nginx/nginx.conf
-          sed -i "s|# passenger_ruby.*|passenger_ruby /home/deploy/.rbenv/shims/ruby;|" /etc/nginx/nginx.conf
-          sed -i "s|# server_tokens off.*|client_max_body_size 20M;|" /etc/nginx/nginx.conf
+      sed -i "s|www-data;|deploy;|g" "/etc/nginx/nginx.conf"
+      sed -i "s|# passenger_root.*|passenger_root $(/usr/bin/passenger-config --root);|" /etc/nginx/nginx.conf
+      sed -i "s|# passenger_ruby.*|passenger_ruby /home/deploy/.rbenv/shims/ruby;|" /etc/nginx/nginx.conf
+      sed -i "s|# server_tokens off.*|client_max_body_size 20M;|" /etc/nginx/nginx.conf
 
-          service nginx restart
+      service nginx restart
 
-          ### End Passenger Setup ###
+      ### End Passenger Setup ###
 
-          hr
+      hr
 
-          ### Begin project structure ###
+      ### Begin project structure ###
 
-          say "Create folder for projects"
+      say "Create folder for projects"
 
-          su - deploy -c 'mkdir -p /home/deploy/projects/'
+      su - deploy -c 'mkdir -p /home/deploy/projects/'
 
-          say "All projects goes here: $(important '/home/deploy/projects/')"
+      say "All projects goes here: $(important '/home/deploy/projects/')"
 
-          ### End project structure ###
+      ### End project structure ###
 
-          hr
+      hr
 
-          ### Begin postfix setup ###
+      ### Begin postfix setup ###
 
-          say "Removing standard mailer exim4"
-          apt-get remove -y exim4 exim4-base exim4-config exim4-daemon-light
-          apt-get purge -y exim4 exim4-base exim4-config exim4-daemon-light
+      say "Removing standard mailer exim4"
+      apt-get remove -y exim4 exim4-base exim4-config exim4-daemon-light
+      apt-get purge -y exim4 exim4-base exim4-config exim4-daemon-light
 
-          say "Install postfix"
-          apt-get update --fix-missing
-          echo $SERVER_NAME > "/etc/mailname"
-          debconf-set-selections <<< "postfix postfix/mailname string $SERVER_NAME"
-          debconf-set-selections <<< "postfix postfix/main_mailer_type string 'Internet Site'"
-          apt-get install -y postfix
+      say "Install postfix"
+      apt-get update --fix-missing
+      echo $SERVER_NAME > "/etc/mailname"
+      debconf-set-selections <<< "postfix postfix/mailname string $SERVER_NAME"
+      debconf-set-selections <<< "postfix postfix/main_mailer_type string 'Internet Site'"
+      apt-get install -y postfix
 
-          ### End postfix setup ###
+      ### End postfix setup ###
 
-          hr
+      hr
 
-          ### Begin conclusion ###
+      ### Begin conclusion ###
 
-          say "\nОтчет об установке будет отправлен на почту $SUCCESS_MAIL\n\n"
+      say "\nОтчет об установке будет отправлен на почту $SUCCESS_MAIL\n\n"
 
-          say "Success notification sent on $(important $SUCCESS_MAIL)"
+      say "Success notification sent on $(important $SUCCESS_MAIL)"
 
-          printf "Your server $SERVER_NAME successfully installed and ready to work!
+      printf "Your server $SERVER_NAME successfully installed and ready to work!
 
-          mysql root password: $MYSQL_PASSWORD
+      mysql root password: $MYSQL_PASSWORD
 
-          Public deployment key:
-          $(cat /home/deploy/.ssh/id_rsa.pub)" | mail -s "Stage setup on $SERVER_NAME success" $SUCCESS_MAIL
+      Public deployment key:
+      $(cat /home/deploy/.ssh/id_rsa.pub)" | mail -s "Stage setup on $SERVER_NAME success" $SUCCESS_MAIL
 
-          ### End conclusion ###
+      ### End conclusion ###
 
-          printf "\n"
+      printf "\n"
 
-          ### End stage setup ###
+      ### End stage setup ###
 
-          break
-          ;;
+      break
+      ;;
 
-        No )
-          say "$(currtime)"
-          exit 0 # Exit without further setup
-          ;;
-    esac
-done
+    * )
+      say "$(currtime)"
+      exit 0 # Exit without further setup
+      ;;
+esac
 
 hr
 
