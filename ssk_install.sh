@@ -85,9 +85,9 @@ fi
 
 say "Do you want to further server setup? You always be able to do it later with $(important 'sudo ssk_install')"
 
-read -p "Continue (y/N)?" choice
+read -r -p "Continue (y/N)? " choice
 case $choice in
-    [yY][eE][sS]|[yY] )
+[yY][eE][sS]|[yY] )
 
       ### Begin stage setup ###
 
@@ -377,7 +377,7 @@ case $choice in
       break
       ;;
 
-    * )
+* )
       say "$(currtime)"
       exit 0 # Exit without further setup
       ;;
