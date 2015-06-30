@@ -280,7 +280,7 @@ case $choice in
       su - deploy -c 'source /home/deploy/.profile'
 
       say "Install the latest ruby version" # TODO make version input or selector
-      su - deploy -c 'rbenv install 2.2.2'
+      su - deploy -c 'rbenv install --verbose 2.2.2'
       su - deploy -c 'rbenv global 2.2.2'
       su - deploy -c 'rbenv rehash'
 
