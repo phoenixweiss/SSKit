@@ -373,8 +373,6 @@ case $choice in
       printf "\n"
 
       ### End stage setup ###
-
-      break
       ;;
 
 * )
