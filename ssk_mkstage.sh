@@ -11,7 +11,7 @@ fi
 
 rootonly
 
-EXPECTED_ARGS=2 # Number of expected arguments
+EXPECTED_ARGS=1 # Number of expected arguments
 E_BADARGS=65 # Bad arguments error code
 MYSQL="$(which mysql)"
 proj_sql_pass="$(pass_gen 12)"

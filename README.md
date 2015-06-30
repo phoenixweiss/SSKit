@@ -20,7 +20,7 @@ Server Setup Kit — All you need for easy setup a new Debian 7+ server that fit
 
 ## How to install
 
-Make sure you know sudo password(if any).
+Make sure you know sudo password(if any) and have at least one RSA-key for root to access server w/o password!
 
 Install using __curl__
 
