@@ -68,7 +68,7 @@ $MYSQL -uroot -p -e "$SQL" # DO NOT FORGET MYSQL ROOT PASSWORD
 
 printf "$DB_CONFIG" > /home/deploy/projects/$1/shared/config/database.yml
 
-chmod -R 600 /home/deploy/projects/$1/shared/config/*
+chmod -R 755 /home/deploy/projects/$1/shared/config/*
 chown -R deploy /home/deploy/projects/$1/shared/config/*
 chgrp -R deploy /home/deploy/projects/$1/shared/config/*
 
