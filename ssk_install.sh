@@ -393,4 +393,6 @@ say "$(currtime)"
 
 ### End main script ###
 
+# TODO reboot if not interactive!
+
 exit 0 # Success exit

@@ -11,7 +11,7 @@ fi
 
 rootonly
 
-EXPECTED_ARGS=2 # Number of expected arguments
+EXPECTED_ARGS=1 # Number of expected arguments
 E_BADARGS=65 # Bad arguments error code
 MYSQL="$(which mysql)"
 proj_sql_pass="$(pass_gen 12)"
@@ -62,13 +62,18 @@ production:
   password: $proj_sql_pass
   # socket: /tmp/mysql.sock
 "
+say "Please enter MySQL root password:"
 
 $MYSQL -uroot -p -e "$SQL" # DO NOT FORGET MYSQL ROOT PASSWORD
 
 printf "$DB_CONFIG" > /home/deploy/projects/$1/shared/config/database.yml
 
+chmod -R 755 /home/deploy/projects/$1/shared/config/*
+chown -R deploy /home/deploy/projects/$1/shared/config/*
+chgrp -R deploy /home/deploy/projects/$1/shared/config/*
+
 say "To make sure project work use:"
-say $(important "tail -f /home/deploy/projects/$1/shared/log/production.log")
+say "tail -f /home/deploy/projects/$1/shared/log/production.log"
 
 service nginx restart
 
