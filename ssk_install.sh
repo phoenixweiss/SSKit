@@ -62,6 +62,7 @@ chmod +x *.sh
 
 ln -s "$home/.sskit/ssk_install.sh" "/usr/local/bin/ssk_install" >/dev/null 2>&1
 ln -s "$home/.sskit/ssk_mkstage.sh" "/usr/local/bin/ssk_mkstage" >/dev/null 2>&1
+ln -s "$home/.sskit/ssk_mkswap.sh" "/usr/local/bin/ssk_mkswap" >/dev/null 2>&1
 ln -s "$home/.sskit/ssk_test.sh" "/usr/local/bin/ssk_test" >/dev/null 2>&1
 
 printf "\n"
@@ -71,7 +72,8 @@ hr
 say "Installation completed. New global commands availible:
 1. $(important 'ssk_install') (this script)
 2. $(important 'ssk_mkstage') (creates stage for project with nginx config and new db)
-3. $(important 'ssk_test') (test script for debug) $(warn '*')
+3. $(important 'ssk_mkswap') (creates proper swap-file based on RAM size)
+4. $(important 'ssk_test') (test script for debug) $(warn '*')
 Do not forget to use sudo for execute them!
 
 $(warn '* currently in progress')"
@@ -84,6 +86,8 @@ if [ $ostype != Linux ]; then
 fi
 
 say "Do you want to further server setup? You always be able to do it later with $(important 'sudo ssk_install')"
+
+# TODO recomend to make swap first before install if ramsizemb < 1000
 
 read -r -p "Continue (y/N)? " choice
 case $choice in

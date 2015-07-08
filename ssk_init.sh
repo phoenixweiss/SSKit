@@ -64,6 +64,10 @@ oscodename() {
   echo "$(lsb_release -c)" | sed 's/.*:\t//' # Extracts release codename
 }
 
+ramsizemb() {
+  echo "$(grep MemTotal /proc/meminfo)" | sed -n 's/.*:\s *//gp' | sed 's/\s.*//' | bc <<< "$(xargs echo) / 1024"
+}
+
 canonize() {
   echo "$1" | sed 's/[^a-zA-Z0-9]//g' # Canonization for any string
 }
