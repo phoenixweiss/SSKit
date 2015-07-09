@@ -11,8 +11,6 @@ fi
 
 rootonly
 
-SWAP_TEMPLATE=" "
-
 say "You system partitions are:"
 
 blkid
@@ -21,11 +19,11 @@ hr
 
 say "Info about current swap(if any):"
 
-swapon -s
+cat /proc/swaps
 
 hr
 
-say "Info about free memory(include swap)"
+say "Info about free memory(with swap):"
 
 free
 
@@ -35,7 +33,7 @@ vmstat
 
 hr
 
-say "Currently, you have $(ramsizemb)Mb of RAM"
+say "Currently, you have $(ramsizemb) Mb of RAM"
 
 say "Do you want to make a proper swapfile based on your RAM size?"
 
@@ -57,7 +55,9 @@ case $choice in
 
       echo "vm.swappiness=15" >> /etc/sysctl.conf # TODO check if the line presents!
 
-      say "$(ramsizemb)Mb swap file ready and mounted in /swapfile"
+      say "$(ramsizemb) Mb swap file ready and mounted in /swapfile"
+
+      say "To check all info about using memory try $(important 'cat /proc/meminfo')"
 
       say "Please, do not forget to $(important 'reboot') server! Please do it manually!"
 
