@@ -11,6 +11,10 @@ fi
 
 rootonly
 
+# Get swap details
+SWAPUSED=`free -m | grep 'Swap:' | awk '{ print $3 }'`
+SWAPTOTAL=`free -m | grep 'Swap:' | awk '{ print $2 }'`
+
 say "You system partitions are:"
 
 blkid
@@ -33,7 +37,7 @@ vmstat
 
 hr
 
-say "Currently, you have $(ramsizemb) Mb of RAM"
+say "Currently, you have $(ramsizemb) Mb of real RAM, $SWAPTOTAL Mb of swap ($SWAPUSED Mb used right now)"
 
 say "Do you want to make a proper swapfile based on your RAM size?"
 
