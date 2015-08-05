@@ -23,9 +23,17 @@ then
   exit $E_BADARGS
 fi
 
+# TODO add default self-signed cert ssl support
+
 NGINX_CONFIG="server {
 \t listen 80;
+\t #listen 443 ssl;
 \t server_name www.$1 $1;
+\t
+\t #ssl_protocols \t TLSv1 TLSv1.1 TLSv1.2;
+\t #ssl_certificate \t /etc/nginx/ssl/cert.pem;
+\t #ssl_certificate_key \t /etc/nginx/ssl/cert.key;
+\t
 \t root /home/deploy/projects/$1/current/public;
 \t passenger_enabled on;
 \t rails_env production;
