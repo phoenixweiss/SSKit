@@ -15,7 +15,7 @@ EXPECTED_ARGS=1 # Number of expected arguments
 E_BADARGS=65 # Bad arguments error code
 MYSQL="$(which mysql)"
 proj_sql_pass="$(pass_gen 12)"
-canonic_name="$(canonize $1)"
+canonic_name="$(canonize $1 | head -c 16)"
 
 if [ $# -ne $EXPECTED_ARGS ]
 then
