@@ -284,8 +284,8 @@ case $choice in
       su - deploy -c 'source /home/deploy/.profile'
 
       say "Install the latest ruby version" # TODO make version input or selector
-      su - deploy -c 'rbenv install --verbose 2.2.2'
-      su - deploy -c 'rbenv global 2.2.2'
+      su - deploy -c 'rbenv install --verbose 2.2.3'
+      su - deploy -c 'rbenv global 2.2.3'
       su - deploy -c 'rbenv rehash'
 
       say "Ruby version check"
@@ -297,6 +297,28 @@ case $choice in
       su - deploy -c 'gem install bundler'
 
       ### End rbenv and ruby setup ###
+
+      hr
+
+      ### Begin Apache Remove ###
+
+      say "In case of 80 port locking tr to remove apache"
+
+      netstat -tlnp | grep 80
+
+      # TODO apache handle
+
+      # kill 9634
+
+      # service apache2 stop
+
+      # apt-get purge apache2 apache2-utils apache2.2-bin apache2-common
+
+      # apt-get autoremove
+
+      # whereis apache2 // ---> // rm -rf /etc/apache2
+
+      ### End Apache Remove ###
 
       hr
 
