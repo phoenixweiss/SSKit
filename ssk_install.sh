@@ -390,6 +390,16 @@ case $choice in
 
       hr
 
+      ### Begin nodejs ###
+
+      say "Install nodejs as native JS compile framework"
+
+      apt-get install -y nodejs
+
+      ### End nodejs ###
+
+      hr
+
       ### Begin conclusion ###
 
       say "\nОтчет об установке будет отправлен на почту $SUCCESS_MAIL\n\n"
