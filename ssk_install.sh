@@ -97,31 +97,62 @@ case $choice in
 
       printf "\n"
 
-      ### Begin Email reading ###
-
-      say "Please enter email for sending notification after the success setup $(warn '(WILL CONTAIN PASSWORDS!)')"
-
-      read SUCCESS_MAIL # TODO make sure email not empty
-
-      say "Email $(important $SUCCESS_MAIL) will be used for success notification"
-
-      ### End Email reading ###
-
-      hr
-
       ### Begin hostname handling ###
 
       say "Current hostname is: $(hostname)"
 
       say "Please enter the new hostname (may be like this $(important server.yourdomain.com)):";
 
-      read SERVER_NAME # TODO make sure server name not empty
+      read SERVER_NAME
+      if [ ! -z "$SERVER_NAME" -a "$SERVER_NAME" != " " ];
+      then
+        say "Server name is set to $SERVER_NAME"
+      else
+        SERVER_NAME="server"
+        say "Desired server name invalid. Default server name is set to $SERVER_NAME"
+      fi
       sed -i "s/$(hostname)/$SERVER_NAME/g" /etc/hosts
       echo $SERVER_NAME > /etc/hostname
 
       say "Server name $(important $SERVER_NAME) will be used by default hostname"
 
       ### End hostname handling ###
+
+      hr
+
+      ### Begin Email reading ###
+
+      say "Please enter email for sending notification after the success setup $(warn '(WILL CONTAIN PASSWORDS!)')"
+
+      read SUCCESS_MAIL
+      if [ ! -z "$SUCCESS_MAIL" -a "$SUCCESS_MAIL" != " " ];
+      then
+        say "Notofication email is set to $SUCCESS_MAIL"
+      else
+        SUCCESS_MAIL="root@server"
+        say "Desired Notofication email invalid. Default notofication email is set to $SUCCESS_MAIL"
+      fi
+      say "Email $(important $SUCCESS_MAIL) will be used for success notification"
+
+      ### End Email reading ###
+
+      hr
+
+      ### Begin ruby version selector ###
+
+      say "Please enter global ruby version you wish to install:"
+
+      read RUBY_VER
+
+      if [ ! -z "$RUBY_VER" -a "$RUBY_VER" != " " ];
+      then
+        say "Desired ruby version is set to $RUBY_VER"
+      else
+        RUBY_VER="2.3.0"
+        say "Desired ruby version invalid. Default ruby version is set to $RUBY_VER"
+      fi
+
+      ### End ruby version selector ###
 
       hr
 
@@ -259,8 +290,6 @@ case $choice in
       say "Make $(important 'max_allowed_packet') 64M"
       sed -i "s|.*max_allowed_packet.*|max_allowed_packet = 64M|" /etc/mysql/my.cnf
 
-      # TODO ln -s /run/mysqld/mysqld.sock /tmp/mysql.sock
-
       service mysql restart
 
       ### End MySQL Setup ###
@@ -271,6 +300,8 @@ case $choice in
 
       say "Installing $(important 'rbenv') for user deploy"
       su - deploy -c 'curl https://raw.githubusercontent.com/fesplugas/rbenv-installer/master/bin/rbenv-installer | bash' # TODO make another installer myself
+
+      echo "export RUBY_VER=$RUBY_VER" >> /home/deploy/.profile
 
       echo 'export RBENV_ROOT="/home/deploy/.rbenv"' >> /home/deploy/.profile
 
@@ -283,9 +314,9 @@ case $choice in
 
       su - deploy -c 'source /home/deploy/.profile'
 
-      say "Install the latest ruby version" # TODO make version input or selector
-      su - deploy -c 'rbenv install --verbose 2.2.3'
-      su - deploy -c 'rbenv global 2.2.3'
+      say "Install desired ruby version"
+      su - deploy -c 'rbenv install --verbose $RUBY_VER'
+      su - deploy -c 'rbenv global $RUBY_VER'
       su - deploy -c 'rbenv rehash'
 
       say "Ruby version check"
@@ -302,7 +333,7 @@ case $choice in
 
       ### Begin Apache Remove ###
 
-      say "In case of 80 port locking tr to remove apache"
+      say "In case of 80 port locking try to remove apache"
 
       netstat -tlnp | grep 80
 
