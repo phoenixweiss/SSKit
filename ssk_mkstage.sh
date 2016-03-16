@@ -23,16 +23,14 @@ then
   exit $E_BADARGS
 fi
 
-# TODO add default self-signed cert ssl support
-
 NGINX_CONFIG="server {
 \t listen 80;
-\t #listen 443 ssl;
+\t listen 443 ssl;
 \t server_name www.$1 $1;
 \t
-\t #ssl_protocols \t TLSv1 TLSv1.1 TLSv1.2;
-\t #ssl_certificate \t /etc/nginx/ssl/cert.pem;
-\t #ssl_certificate_key \t /etc/nginx/ssl/cert.key;
+\t ssl_protocols \t TLSv1 TLSv1.1 TLSv1.2;
+\t ssl_certificate \t /etc/nginx/ssl/$canonic_name.pem;
+\t ssl_certificate_key \t /etc/nginx/ssl/$canonic_name.key;
 \t
 \t root /home/deploy/projects/$1/current/public;
 \t passenger_enabled on;
@@ -79,6 +77,8 @@ printf "$DB_CONFIG" > /home/deploy/projects/$1/shared/config/database.yml
 chmod -R 755 /home/deploy/projects/$1/shared/config/*
 chown -R deploy /home/deploy/projects/$1/shared/config/*
 chgrp -R deploy /home/deploy/projects/$1/shared/config/*
+
+openssl req -new -x509 -days 9999 -nodes -newkey rsa:2048 -subj /C=RU/O=$canonic_name/CN=$1/emailAddress=info@$1 -out /etc/nginx/ssl/$canonic_name.pem -keyout /etc/nginx/ssl/$canonic_name.key
 
 say "To make sure project work use:"
 say "tail -f /home/deploy/projects/$1/shared/log/production.log"

@@ -381,14 +381,16 @@ case $choice in
 
       ### End Passenger Setup ###
 
-      # TODO add default self-signed cert ssl support
+      ### Begin Nginx SSL Preparations ###
 
-      # mkdir /etc/nginx/ssl
-      # chown root:root /etc/nginx/ssl
-      # chmod 700 /etc/nginx/ssl
-      # cd /etc/nginx/ssl
-      # openssl req -new -x509 -days 9999 -nodes -newkey rsa:2048 -subj /C=RU/O=AVTOPODIUM/CN=avtopodium.net/emailAddress=info@avtopodium.net -out cert.pem -keyout cert.key
-      # service nginx reload
+      say "Create folder for SSL certificates"
+
+      mkdir /etc/nginx/ssl
+      chown root:root /etc/nginx/ssl
+      chmod 700 /etc/nginx/ssl
+      service nginx reload
+
+      ### End Nginx SSL Preparations ###
 
       hr
 
