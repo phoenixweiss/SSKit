@@ -32,6 +32,25 @@ NGINX_CONFIG="server {
 \t ssl_certificate \t /etc/nginx/ssl/$canonic_name.pem;
 \t ssl_certificate_key \t /etc/nginx/ssl/$canonic_name.key;
 \t
+\t #for PHP-based projects uncomment:
+\t #root /home/deploy/projects/$1/current/www;
+\t #charset utf-8;
+\t #access_log /home/deploy/projects/$1/access.log;
+\t #error_log  /home/deploy/projects/$1/error.log;
+\t #
+\t # location ~ \.php$ {
+\t # include fastcgi_params;
+\t # fastcgi_pass unix:/var/run/php5-fpm.sock;
+\t # fastcgi_index index.php;
+\t # fastcgi_param SCRIPT_FILENAME \$document_root\$fastcgi_script_name;
+\t # }
+\t #
+\t # location /
+\t # {
+\t # index  index.php index.html;
+\t # }
+\t #
+\t #for PHP-based projects comment anything below except last \"}\"
 \t root /home/deploy/projects/$1/current/public;
 \t passenger_enabled on;
 \t rails_env production;

@@ -433,6 +433,22 @@ case $choice in
 
       hr
 
+      ### Begin php-fpm ###
+
+      say "Install php-fpm for PHP-based projects"
+
+      apt-get install -y php5-imagick php5-fpm php5-mysql
+
+      sed -i "s|www-data|deploy|g" "/etc/php5/fpm/pool.d/www.conf"
+
+      /etc/init.d/php5-fpm restart
+
+      update-rc.d php5-fpm defaults
+
+      ### End php-fpm ###
+
+      hr
+
       ### Begin conclusion ###
 
       say "\nОтчет об установке будет отправлен на почту $SUCCESS_MAIL\n\n"
