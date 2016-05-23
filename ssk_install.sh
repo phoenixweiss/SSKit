@@ -148,7 +148,7 @@ case $choice in
       then
         say "Desired ruby version is set to $RUBY_VER"
       else
-        RUBY_VER="2.3.0"
+        RUBY_VER="2.3.1"
         say "Desired ruby version invalid. Default ruby version is set to $RUBY_VER"
       fi
 
