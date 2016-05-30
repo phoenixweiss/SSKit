@@ -437,7 +437,7 @@ case $choice in
 
       say "Install php-fpm for PHP-based projects"
 
-      apt-get install -y php5-imagick php5-fpm php5-mysql
+      apt-get install -y php5-imagick php5-fpm php5-mysql php5-gd
 
       sed -i "s|www-data|deploy|g" "/etc/php5/fpm/pool.d/www.conf"
 
