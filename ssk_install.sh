@@ -372,7 +372,7 @@ case $choice in
       apt-get update --fix-missing
       apt-get -y autoremove
 
-      sed -i "s|www-data;|deploy;|g" "/etc/nginx/nginx.conf"
+      sed -i "s|www-data;|deploy;|g" /etc/nginx/nginx.conf
       sed -i "s|# passenger_root.*|passenger_root $(/usr/bin/passenger-config --root);|" /etc/nginx/nginx.conf
       sed -i "s|# passenger_ruby.*|passenger_ruby /home/deploy/.rbenv/shims/ruby;|" /etc/nginx/nginx.conf
       sed -i "s|# server_tokens off.*|client_max_body_size 20M;|" /etc/nginx/nginx.conf
