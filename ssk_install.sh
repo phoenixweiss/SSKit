@@ -451,8 +451,6 @@ case $choice in
 
       ### Begin conclusion ###
 
-      say "\nОтчет об установке будет отправлен на почту $SUCCESS_MAIL\n\n"
-
       say "Success notification sent on $(important $SUCCESS_MAIL)"
 
       printf "Your server $SERVER_NAME successfully installed and ready to work!
