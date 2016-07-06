@@ -11,97 +11,76 @@ fi
 
 rootonly
 
-EXPECTED_ARGS=1 # Number of expected arguments
+EXPECTED_ARGS=2 # Number of expected arguments
 E_BADARGS=65 # Bad arguments error code
 MYSQL="$(which mysql)"
 proj_sql_pass="$(pass_gen 12)"
 canonic_name="$(canonize $1 | head -c 16)"
+conftype=$2
 
 if [ $# -ne $EXPECTED_ARGS ]
 then
-  say "How to use script: $0 latin_domain_name"
+  say "How to use script: $0 latin_domain_name config_type"
+  say "Config types may be: php, html, rails, sinatra"
+  say "You will need to enter MySQL root password, so $(warn 'prepare it!')"
   exit $E_BADARGS
 fi
 
-NGINX_CONFIG="server {
-\t listen 80;
-\t listen 443 ssl;
-\t server_name www.$1 $1;
-\t
-\t ssl_protocols \t TLSv1 TLSv1.1 TLSv1.2;
-\t ssl_certificate \t /etc/nginx/ssl/$canonic_name.pem;
-\t ssl_certificate_key \t /etc/nginx/ssl/$canonic_name.key;
-\t
-\t #for PHP-based projects uncomment:
-\t #root /home/deploy/projects/$1/current/www;
-\t #charset utf-8;
-\t #access_log /home/deploy/projects/$1/access.log;
-\t #error_log  /home/deploy/projects/$1/error.log;
-\t #
-\t # location ~ \.php$ {
-\t # include fastcgi_params;
-\t # fastcgi_pass unix:/var/run/php5-fpm.sock;
-\t # fastcgi_index index.php;
-\t # fastcgi_param SCRIPT_FILENAME \$document_root\$fastcgi_script_name;
-\t # }
-\t #
-\t # location /
-\t # {
-\t # index  index.php index.html;
-\t # }
-\t #
-\t #for PHP-based projects comment anything below except last \"}\"
-\t root /home/deploy/projects/$1/current/public;
-\t passenger_enabled on;
-\t rails_env production;
-\t location ~ ^/assets/ {
-\t\t expires 1y;
-\t\t add_header Cache-Control public;
-\t\t add_header ETag \"\";
-\t\t break;
-\t }
-}
-"
+case $conftype in
+      php | html | rails | sinatra )
 
-printf "$NGINX_CONFIG" > /etc/nginx/conf.d/$1.conf
+      cp $home/.sskit/templates/$conftype.conf /etc/nginx/conf.d/$1.conf
 
-su - deploy -c "mkdir -p /home/deploy/projects/$1/shared/config/"
+      sed -i "s|%%domain%%|$1|g" /etc/nginx/conf.d/$1.conf
+      sed -i "s|%%canonic_name%%|$canonic_name|g" /etc/nginx/conf.d/$1.conf
 
-Q1="CREATE DATABASE IF NOT EXISTS $canonic_name CHARACTER SET utf8;"
-Q2="GRANT ALL ON $canonic_name.* TO '$canonic_name'@'localhost' IDENTIFIED BY '$proj_sql_pass';"
-Q3="FLUSH PRIVILEGES;"
-Q4="SELECT User,Host FROM mysql.user;"
-Q5="SHOW DATABASES;"
-SQL="${Q1}${Q2}${Q3}${Q4}${Q5}"
+      su - deploy -c "mkdir -p /home/deploy/projects/$1/shared/config/"
 
-# config for database.yml
-DB_CONFIG="
-production:
-  adapter: mysql2
-  encoding: utf8
-  host: localhost
-  reconnect: true
-  database: $canonic_name
-  pool: 5
-  username: $canonic_name
-  password: $proj_sql_pass
-  # socket: /tmp/mysql.sock
-"
-say "Please enter MySQL root password:"
+      Q1="CREATE DATABASE IF NOT EXISTS $canonic_name CHARACTER SET utf8;"
+      Q2="GRANT ALL ON $canonic_name.* TO '$canonic_name'@'localhost' IDENTIFIED BY '$proj_sql_pass';"
+      Q3="FLUSH PRIVILEGES;"
+      Q4="SELECT User,Host FROM mysql.user;"
+      Q5="SHOW DATABASES;"
+      SQL="${Q1}${Q2}${Q3}${Q4}${Q5}"
 
-$MYSQL -uroot -p -e "$SQL" # DO NOT FORGET MYSQL ROOT PASSWORD
+      # config for database.yml
+      DB_CONFIG="
+      production:
+        adapter: mysql2
+        encoding: utf8
+        host: localhost
+        reconnect: true
+        database: $canonic_name
+        pool: 5
+        username: $canonic_name
+        password: $proj_sql_pass
+        # socket: /tmp/mysql.sock
+      "
+      say "Please enter MySQL root password:"
 
-printf "$DB_CONFIG" > /home/deploy/projects/$1/shared/config/database.yml
+      $MYSQL -uroot -p -e "$SQL" # DO NOT FORGET MYSQL ROOT PASSWORD
 
-chmod -R 755 /home/deploy/projects/$1/shared/config/*
-chown -R deploy /home/deploy/projects/$1/shared/config/*
-chgrp -R deploy /home/deploy/projects/$1/shared/config/*
+      printf "$DB_CONFIG" > /home/deploy/projects/$1/shared/config/database.yml
 
-openssl req -new -x509 -days 9999 -nodes -newkey rsa:2048 -subj /C=RU/O=$canonic_name/CN=$1/emailAddress=info@$1 -out /etc/nginx/ssl/$canonic_name.pem -keyout /etc/nginx/ssl/$canonic_name.key
+      chmod -R 755 /home/deploy/projects/$1/shared/config/*
+      chown -R deploy /home/deploy/projects/$1/shared/config/*
+      chgrp -R deploy /home/deploy/projects/$1/shared/config/*
 
-say "To make sure project work use:"
-say "tail -f /home/deploy/projects/$1/shared/log/production.log"
+      openssl req -new -x509 -days 9999 -nodes -newkey rsa:2048 -subj /C=RU/O=$canonic_name/CN=$1/emailAddress=info@$1 -out /etc/nginx/ssl/$canonic_name.pem -keyout /etc/nginx/ssl/$canonic_name.key
 
-service nginx restart
+      say "Stage for $1 is ready"
+      say "Project working directory: /home/deploy/projects/$1"
+      say "DB config file: /home/deploy/projects/$1/shared/config/database.yml"
+      say "Self-signed certs are here: /etc/nginx/ssl/"
+      say "Proper Nginx config file: /etc/nginx/conf.d/$1.conf"
 
-exit 0
+      service nginx restart
+
+      exit 0
+
+      ;;
+* )
+      say "No such conftype"
+      exit 0 # Exit without further setup
+      ;;
+esac
