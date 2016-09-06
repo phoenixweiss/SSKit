@@ -357,7 +357,7 @@ case $choice in
 
       say "Install Passenger and make all necessary configuration"
 
-      apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 561F9B9CAC40B2F7
+      apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 561F9B9CAC40B2F7
 
       apt-get install -y apt-transport-https ca-certificates
 
@@ -373,8 +373,20 @@ case $choice in
       apt-get -y autoremove
 
       sed -i "s|www-data;|deploy;|g" /etc/nginx/nginx.conf
-      sed -i "s|# passenger_root.*|passenger_root $(/usr/bin/passenger-config --root);|" /etc/nginx/nginx.conf
-      sed -i "s|# passenger_ruby.*|passenger_ruby /home/deploy/.rbenv/shims/ruby;|" /etc/nginx/nginx.conf
+
+      # if grep -q "# include /etc/nginx/passenger.conf;" "/etc/nginx/nginx.conf" then
+      #   echo "passenger.conf is commented"
+      # else
+      #   echo "passenger.conf is NOT commented"
+      # fi
+
+      sed -i "s|# include /etc/nginx/passenger.conf;|include /etc/nginx/passenger.conf;|g" /etc/nginx/nginx.conf
+
+      sed -i "s|passenger_root.*|passenger_root $(/usr/bin/passenger-config --root);|" /etc/nginx/passenger.conf
+      sed -i "s|passenger_ruby.*|passenger_ruby /home/deploy/.rbenv/shims/ruby;|" /etc/nginx/passenger.conf
+
+      echo "passenger_max_pool_size 2;" >> /etc/nginx/passenger.conf
+
       sed -i "s|# server_tokens off.*|client_max_body_size 20M;|" /etc/nginx/nginx.conf
 
       service nginx restart
