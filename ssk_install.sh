@@ -431,6 +431,11 @@ case $choice in
       debconf-set-selections <<< "postfix postfix/main_mailer_type string 'Internet Site'"
       apt-get install -y postfix
 
+      # TODO
+      # inet_protocols = ipv4
+      # /etc/postfix/main.cf
+      # /etc/init.d/postfix restart
+
       ### End postfix setup ###
 
       hr
