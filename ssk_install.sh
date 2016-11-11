@@ -156,6 +156,25 @@ case $choice in
 
       hr
 
+      ### Begin PHP selector ###
+
+      say "Do you need PHP support via $(important 'php-fpm')?"
+
+      read -r -p "Please confirm (y/N)? " choice
+      case $choice in
+      [yY][eE][sS] | [yY] )
+          PHP_SETUP="1"
+          say "PHP support will be installed soon"
+          ;;
+      * )
+          say "PHP support not selected. If you will need it, you should install $(important 'php-fpm') manually"
+          ;;
+      esac
+
+      ### End PHP selector ###
+
+      hr
+
       ### Begin locale generate ###
 
       # TODO add more locales support
@@ -452,15 +471,20 @@ case $choice in
 
       ### Begin php-fpm ###
 
-      say "Install php-fpm for PHP-based projects"
+      if [ ! -z "$PHP_SETUP" -a "$PHP_SETUP" != " " ];
+      then
+        say "Install $(important 'php-fpm') for PHP-based projects"
 
-      apt-get install -y php5-imagick php5-fpm php5-mysql php5-gd
+        apt-get install -y php5-imagick php5-fpm php5-mysql php5-gd
 
-      sed -i "s|www-data|deploy|g" "/etc/php5/fpm/pool.d/www.conf"
+        sed -i "s|www-data|deploy|g" "/etc/php5/fpm/pool.d/www.conf"
 
-      /etc/init.d/php5-fpm restart
+        /etc/init.d/php5-fpm restart
 
-      update-rc.d php5-fpm defaults
+        update-rc.d php5-fpm defaults
+      else
+        say "$(important 'php-fpm') skipped"
+      fi
 
       ### End php-fpm ###
 
