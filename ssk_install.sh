@@ -199,6 +199,7 @@ case $choice in
       ### Begin update ###
 
       say "Update all"
+      apt-get clean
       apt-get update
       apt-get -y upgrade
       apt-get -y autoremove
