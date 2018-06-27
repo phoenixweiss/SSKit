@@ -387,7 +387,7 @@ case $choice in
       chmod 600 /etc/apt/sources.list.d/passenger.list
       apt-get update
 
-      apt-get install -y --force-yes nginx-full nginx-extras passenger
+      apt-get install -y --force-yes nginx-full passenger
 
       apt-get update --fix-missing
       apt-get -y autoremove
