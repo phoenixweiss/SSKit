@@ -319,8 +319,8 @@ case $choice in
       ### Begin rbenv and ruby setup ###
 
       say "Installing $(important 'rbenv') for user deploy"
-      su - deploy -c 'curl https://raw.githubusercontent.com/fesplugas/rbenv-installer/master/bin/rbenv-installer | bash' # TODO make another installer myself
-
+      su - deploy -c 'curl -fsSL https://github.com/rbenv/rbenv-installer/raw/master/bin/rbenv-installer | bash'
+      
       echo "export RUBY_VER=$RUBY_VER" >> /home/deploy/.profile
 
       echo 'export RBENV_ROOT="/home/deploy/.rbenv"' >> /home/deploy/.profile
