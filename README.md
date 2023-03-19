@@ -1,3 +1,16 @@
+> Dear users,
+> 
+> I would like to inform you that this repository is being archived as the program it contains has become outdated and there is no longer any possibility or sense in maintaining it. Today, its tasks can be easily and efficiently executed using [Ansible](https://github.com/ansible/ansible) with minimal configuration.
+> 
+> However, you are free to use any part of the SSKit if you wish, in accordance with the MIT license.
+> 
+> Thank you for your understanding.
+> 
+> Best regards,
+> PAVEL TKACHEV (aka Paul Phönixweiß, aka phoenixweiss)
+
+---
+
 ```
 ███████╗███████╗██╗  ██╗██╗████████╗
 ██╔════╝██╔════╝██║ ██╔╝██║╚══██╔══╝
@@ -6,7 +19,7 @@
 ███████║███████║██║  ██╗██║   ██║
 ╚══════╝╚══════╝╚═╝  ╚═╝╚═╝   ╚═╝
 
-by Paul Phönixweiß aka phoenixweiss
+by PAVEL TKACHEV (aka Paul Phönixweiß, aka phoenixweiss)
 ```
 
 # SSKit
